@@ -22,6 +22,7 @@ bool make_fifo_name(int id, char * name, size_t name_max);
 /* Initialiaze a fifo.
  *
  * Num: Number of monitor that the fifo is initialized for. It is given to the name.
+ * Read: Type of fifo. If read=true then it is a read fifo. If it is false then it is a write.
  *
  * return: 0 if everything goes fine. Otherwise, it returns -1.
 */

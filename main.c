@@ -1,6 +1,6 @@
-# include "Fifo.h"
+# include "Interface.h"
 
-int BloomNum;
+int Level, BloomNum;
 
 
 int main(int argc, char * argv[])
@@ -32,16 +32,33 @@ int main(int argc, char * argv[])
     //     mkdir(input, 0700);
     // }
 
-    for(int i=0;i<1;i++) // loop will run n times (n=5)
-    {
-        if(fork() == 0)
-        {
-            printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
-            exit(0);
+    // for(int i=0;i<1;i++) // loop will run n times (n=5)
+    // {
+    //     if(fork() == 0)
+    //     {
+    //         printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
+    //         exit(0);
+    //     }
+    // }
+    // for(int i=0;i<1;i++) // loop will run n times (n=5)
+    // wait(NULL);
+
+    if(argc < 5){
+        printf("Input format ./travelMonitor -c citizenRecordsFile –b bloomSize \n");
+        return 0;
+    }
+
+    char * File;
+    /*Convert the arguments that the user gave.*/
+    for (int i = 1; i < argc; i++){
+        if ( !strcmp(argv[i],"-c") ){
+            File=argv[++i];
+        }
+        else if ( !strcmp(argv[i],"-b") ){
+            BloomNum=atoi(argv[++i]);
         }
     }
-    for(int i=0;i<1;i++){ // loop will run n times (n=5)
-    wait(NULL);
+    Start(File);
 
     // free(input);
     return 0;

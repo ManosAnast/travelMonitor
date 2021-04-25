@@ -39,10 +39,10 @@ void * Fifo_read(int Num)
     void * Input;
     char fifo_name[100];
     if(!make_fifo_name(Num, fifo_name, sizeof(fifo_name))){
-        return -1;
+        return NULL;
     }
 
-    int fd=open(fifo_name, O_WRONLY);
+    int fd=open(fifo_name, O_RDONLY);
     if(read(fd, Input, 100)<0){
         return NULL;
     }

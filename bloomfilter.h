@@ -1,4 +1,6 @@
-/* Σtruct that implements a bloom filter.
+# include "hash.h"
+
+/* Struct that implements a bloom filter.
  * 
  * NumOfBytes: Number of bytes that the bloom filter has.
  * bits: array of bits.

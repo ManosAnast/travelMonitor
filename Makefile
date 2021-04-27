@@ -30,4 +30,4 @@ monitor.o: monitor.c
 	gcc -g -c monitor.c
 
 clean:
-	rm -f main.o Fifo.o Interface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o travelMonitor
+	rm -f main.o Fifo.o Interface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o a.out monitor.o travelMonitor

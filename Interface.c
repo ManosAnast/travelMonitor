@@ -114,21 +114,7 @@ void Start(char * text)
 
     nothing();
 
-    for(int i=0;i<1;i++) // loop will run n times (n=5)
-    {
-        Fifo_init(i);
-        if(fork() == 0)
-        {
-            execlp("./a.out", (char *)i, (char *)NULL);
-            printf("child:%d and parent:%d\n", getpid(), getppid());
-            perror("exec failed");
-            exit(0);
-        }
-        printf("parent?:%d\n", getpid());
-        Fifo_write(0, Vlist);
-    }
-    for(int i=0;i<1;i++) // loop will run n times (n=5)
-    wait(NULL);
+    //TTY();    
 
     Destroy(Vlist, CList);
 

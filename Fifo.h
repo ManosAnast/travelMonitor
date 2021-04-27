@@ -1,13 +1,18 @@
 # include <stdio.h>
 # include <stdlib.h>
-# include <string.h>
-# include <error.h>
-# include <stdbool.h>
+# include <fcntl.h>
+# include <unistd.h>
 # include <sys/types.h>
 # include <sys/stat.h>
-# include <unistd.h>
-# include <fcntl.h>
+# include <string.h>
+# include <dirent.h>
+# include <errno.h>
+# include <stdbool.h>
+# include <time.h>
+#include <signal.h>
+
 # define Parent "travelMonitor"
+
 
 /* Makes the name of the fifo. 
  *
@@ -35,7 +40,7 @@ int Fifo_init(int Num);
  * 
  * return: 0 if everything goes fine. Otherwise, it returns -1.
 */
-int Fifo_write(int Num, void * Input);
+int Fifo_write(int Num, void * Input, int size);
 
 /* Read from fifo.
  *
@@ -43,4 +48,4 @@ int Fifo_write(int Num, void * Input);
  * 
  * return: The fifo's data if everything goes fine. Otherwise, it returns NULL.
 */
-void * Fifo_read(int Num);
+void * Fifo_read(int Num, int buffer);

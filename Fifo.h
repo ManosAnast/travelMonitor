@@ -9,8 +9,8 @@
 # include <errno.h>
 # include <stdbool.h>
 # include <time.h>
-#include <signal.h>
-
+# include <signal.h>
+# include <sys/wait.h>
 # define Parent "travelMonitor"
 
 

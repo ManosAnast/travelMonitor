@@ -26,7 +26,6 @@ int Fifo_write(int Num, void * Input, int size)
         return -1;
     }
 
-    printf("%s\n",fifo_name);
     int fd=open(fifo_name, O_WRONLY | O_SYNC);
     if(fd<0 && errno == ENXIO){
         perror("open failed:");
@@ -47,7 +46,6 @@ void * Fifo_read(int Num, int buffer)
         return NULL;
     }
 
-    printf("%s\n",fifo_name);
     int fd=open(fifo_name, O_RDONLY);
     if(fd<0){
         perror("open failed:");

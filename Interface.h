@@ -2,6 +2,10 @@
 
 void nothing();
 
+char * FrontTrack(char * src, char * Next);
+
+char * BackTrack(char * src);
+
 void BreakString(char *** Array, char * str, const char * s, int Num);
 
 /* Takes a file and insert it's contents in hash, also starts the TTY that the program needs.

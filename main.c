@@ -2,34 +2,6 @@
 
 int Level, BloomNum;
 
-char * BackTrack(char * src)
-{
-    int i, length=strlen(src);
-    for (i = length; i > 0 ; i--){
-        if (src[i] == '/' && i !=length-1 ){ // Find the last directory/file and remove it
-            src[i+1]='\0';
-            break;
-        }
-    }
-    return src;
-}
-
-
-char * FrontTrack(char * src, char * Next)
-{
-    int length=strlen(src);
-    if( src[length-1] != '/'){ // If the path doesn't have / at the end, add it and the add the new directory/file.
-        strcat(src, "/");
-        strcat(src, Next);
-    }
-    else{
-        strcat(src, Next);
-    }
-    return src;
-}
-
-
-
 int main(int argc, char * argv[])
 {
     if (argc < 9){
@@ -53,46 +25,59 @@ int main(int argc, char * argv[])
             strcpy(input,argv[i]);
         }
     }
+
+    
+    char * buf=(char *)malloc(sizeof(char));
+    sprintf(buf, "%d", buffer);
+    char * filternum=(char *)malloc(sizeof(char));
+    sprintf(filternum, "%d", BloomNum);
     
     for(int i=0;i<numMonitors;i++) // loop will run n times (n=5)
     {
         Fifo_init(i);
         pid_t pid=fork();
-        if(pid == 0)
-        {
+        if(pid == 0){
             char * id=(char *)malloc(sizeof(char));
             sprintf(id, "%d", i);
-            char * buf=(char *)malloc(sizeof(char));
-            sprintf(buf, "%d", buffer);
-            execlp("./a.out", "a.out", id, buf, NULL);
+            execlp("./monitor", "monitor", id, buf, filternum, NULL);
             perror("exec failed");
             exit(0);
         }
-        Fifo_write(i, "Greece", 7);
     }
-    for(int i=0;i<numMonitors;i++) // loop will run n times (n=5)
+
+    // Traverse the input directory and assign the countries to the monitors
+    DIR * dir=opendir(input);
+    struct dirent * ent;
+    int i=0;
+    while ((ent = readdir(dir)) != NULL){
+        input=FrontTrack(input, ent->d_name);
+        if ( strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){
+            struct stat path_stat;
+            if( lstat(input, &path_stat) == -1){
+                perror("Stat");
+                return -1;
+            }
+            if( (path_stat.st_mode & S_IFMT) == S_IFDIR){ //Directory
+                Fifo_write(i, input, (strlen(input)+1)*sizeof(char)); 
+            }
+            i+=1;
+        }
+        input=BackTrack(input);
+    }
+
+    // Unlink all the pipes and wait for the processes.
+    for(int i=0;i<numMonitors;i++){ // loop will run n times (n=5)
+        char fifo_name[100];
+        if(!make_fifo_name(i, fifo_name, sizeof(fifo_name))){
+            return -1;
+        }
+        unlink(fifo_name);
+    }
     wait(NULL);
-
-    // DIR * dir=opendir(input);
-    // struct dirent * ent;
-    // int i=0;
-    // while ((ent = readdir(dir)) != NULL){
-    //     input=FrontTrack(input, ent->d_name);
-    //     struct stat path_stat;
-    //     if( lstat(input, &path_stat) == -1){
-    //         perror("Stat");
-    //         return -1;
-    //     }
-    //     if( (path_stat.st_mode & S_IFMT) == S_IFDIR){ //Directory
-    //        Fifo_write(i, input); 
-    //     }
-    //     i+=1;
-    // }
-
     
     // Start(File);
 
-    // free(input);
-    
+    free(input);
+
     return 0;
 }

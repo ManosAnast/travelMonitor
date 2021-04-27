@@ -1,6 +1,6 @@
 all: clean main.o monitor.o Fifo.o Interface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o
 	gcc main.o Fifo.o Interface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o -o travelMonitor
-	gcc monitor.o Fifo.o Interface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o -o a.out
+	gcc monitor.o Fifo.o Interface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o -o monitor
 
 main.o: main.c
 	gcc -g -c main.c
@@ -30,4 +30,4 @@ monitor.o: monitor.c
 	gcc -g -c monitor.c
 
 clean:
-	rm -f main.o Fifo.o Interface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o a.out monitor.o travelMonitor
+	rm -f main.o Fifo.o Interface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o monitor monitor.o travelMonitor

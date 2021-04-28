@@ -1,4 +1,4 @@
-# include "Interface.h"
+# include "serialize.h"
 
 int Level, BloomNum;
 
@@ -59,11 +59,30 @@ int main(int argc, char * argv[])
             }
             if( (path_stat.st_mode & S_IFMT) == S_IFDIR){ //Directory
                 Fifo_write(i, input, (strlen(input)+1)*sizeof(char)); 
+                break;
             }
             i+=1;
         }
         input=BackTrack(input);
     }
+
+    // Take bloomfilters
+    for (int i = 0; i < numMonitors; i++){
+        printf("for: %d\n", i);
+        void * input =Fifo_read(i, buffer);
+        // printf("%p\n", )
+        bloom bloomfilter = unserialize_bloom(input);
+        int exist=bloomBitExist(&bloomfilter, "2");
+        if (exist)
+        {
+            printf("MAYBE\n");
+        }
+        else{
+            printf("NOT VACCINATED\n");
+        }
+        // printf("%s\n", bloomfilter->bits);
+    }
+    
 
     // Unlink all the pipes and wait for the processes.
     for(int i=0;i<numMonitors;i++){ // loop will run n times (n=5)

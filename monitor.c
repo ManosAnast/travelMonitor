@@ -11,7 +11,7 @@ int main(int args, char * argv[])
     char * Country=(char *)malloc(buffer*sizeof(char));
     Country=(char *)Fifo_read(monitorId, buffer);
     printf("monitor%d: %s\n", monitorId, Country);
-    Start(Country);
+    Start(Country, monitorId);
     free(Country);
     return 0;
 }

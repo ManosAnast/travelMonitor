@@ -1,41 +1,25 @@
 # include "serialize.h"
 
-struct Buffer *new_buffer() {
-    struct Buffer *b = malloc(sizeof(Buffer));
-
-    b->Data = malloc(INITIAL_SIZE);
-    b->Size = INITIAL_SIZE;
-    b->Next = 0;
-
-    return b;
-}
-
-void bufferDestroy(Buffer *b)
+int serialize_bloom(bloom filter, void ** output)
 {
-    free(b->Data);
-    free(b);
-}
-
-void reserve_space(Buffer *b, size_t bytes)
-{
-    if((b->Next + bytes) > b->Size) {
-        /* double size to enforce O(lg N) reallocs */
-        b->Data = realloc(b->Data, b->Size * 2);
-        b->Size *= 2;
-    }
-}
-
-void serialize_int(int x, Buffer *b) 
-{
-    x = htonl(x);
-
-    reserve_space(b, sizeof(int));
-
-    memcpy( ( (char *)b->Data ) + b->Next, &x, sizeof(int));
-    b->Next += sizeof(int);
-}
-
-void serialize_string(char * x, Buffer *b)
-{
+    int Bytes=filter.NumofBytes;
+    int size=Bytes+2*sizeof(int);
     
+    memcpy(*output, &Bytes, sizeof(int));
+
+    char * Arr=filter.bits;
+    memcpy(*output+sizeof(int), filter.bits, Bytes);
+
+    return size;
+}
+
+bloom unserialize_bloom(void * input)
+{
+    bloom filter;
+    memcpy(&(filter.NumofBytes), input, sizeof(int));
+
+    filter.bits=(char *)calloc(filter.NumofBytes, sizeof(char));
+    memcpy(filter.bits, input+sizeof(int), filter.NumofBytes);
+
+    return filter;
 }

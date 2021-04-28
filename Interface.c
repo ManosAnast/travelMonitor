@@ -1,4 +1,4 @@
-# include "Interface.h"
+# include "serialize.h"
 
 void nothing()
 {
@@ -54,7 +54,7 @@ void BreakString(char *** Array, char * str, const char * s, int Num)
     return;
 }
 
-void Start(char * text)
+void Start(char * text, int monitorId)
 {
     int ch,Size=0;
 
@@ -160,10 +160,34 @@ void Start(char * text)
 
     nothing();
 
-    // printf("%d\n", Vlist->Next->not_vaccinated_persons->Header->Next[0]->Id );
+    Virus * VTemp=Vlist->Next;
+    printf("%s\n", VTemp->VirusName );
+    printf("%ld\n", sizeof(VTemp->filter.bits) );
+    int exist=bloomBitExist(&(VTemp->filter), "10");
+    if (exist)
+    {
+        printf("MAYBE\n");
+    }
+    else{
+        printf("NOT VACCINATED\n");
+    }
+    
+    void * output;
+    int size = serialize_bloom(VTemp->filter, &output);
+    int flag=Fifo_write(monitorId, output, size);
+    if (flag<0){ // If something goes wrong with fifo_write, free all the allocated memory and return.
+        Destroy(Vlist, CList);
+        return;
+    }
+    
+    // while (VTemp !=NULL){
+    //     break;
+    //     VTemp=VTemp->Next;
+    // }
+    
+
     //TTY();    
 
-    Destroy(Vlist, CList);
 
     return;
 }

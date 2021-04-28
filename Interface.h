@@ -13,7 +13,7 @@ void BreakString(char *** Array, char * str, const char * s, int Num);
  * text: Name of file that is needed in order to start the program.
  * 
 */
-void Start(char * text);
+void Start(char * text, int monitorId);
 
 /* Takes a virus list and a country list and starts the TTY
  * that gives us the interface that we need in order to use some commands.

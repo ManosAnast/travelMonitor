@@ -26,12 +26,14 @@ int Fifo_write(int Num, void * Input, int size)
         return -1;
     }
 
-    int fd=open(fifo_name, O_WRONLY | O_SYNC);
+    int fd=open(fifo_name, O_WRONLY);
     if(fd<0 && errno == ENXIO){
         perror("open failed:");
         return -1;
     }
+
     if(write(fd, (char *)Input, size)<0){
+        perror("write failed");
         return -1;
     }
     close(fd);

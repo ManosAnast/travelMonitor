@@ -67,12 +67,13 @@ int main(int argc, char * argv[])
     }
 
     // Take bloomfilters
+    Virus * Vlist = VirusInit();
+    char * country;
     for (int i = 0; i < numMonitors; i++){
-        printf("for: %d\n", i);
-        void * input =Fifo_read(i, buffer);
-        // printf("%p\n", )
-        bloom bloomfilter = unserialize_bloom(input);
-        int exist=bloomBitExist(&bloomfilter, "2");
+        // void * country=Fifo_read(i, buffer, &fd);
+        bloom bloomfilter = receive_bloom(i, &country, buffer);
+        VirusInsertBloom(&Vlist, country, bloomfilter);
+        int exist=bloomBitExist(&(bloomfilter), "10");
         if (exist)
         {
             printf("MAYBE\n");
@@ -80,9 +81,8 @@ int main(int argc, char * argv[])
         else{
             printf("NOT VACCINATED\n");
         }
-        // printf("%s\n", bloomfilter->bits);
     }
-    
+    printf("%s\n", VirusFind(Vlist, country)->VirusName);
 
     // Unlink all the pipes and wait for the processes.
     for(int i=0;i<numMonitors;i++){ // loop will run n times (n=5)

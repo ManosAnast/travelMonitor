@@ -26,7 +26,7 @@ int Fifo_write(int Num, void * Input, int size)
         return -1;
     }
 
-    int fd=open(fifo_name, O_WRONLY);
+    int fd=open(fifo_name, O_WRONLY | O_SYNC);
     if(fd<0 && errno == ENXIO){
         perror("open failed:");
         return -1;
@@ -40,23 +40,23 @@ int Fifo_write(int Num, void * Input, int size)
     return 0;
 }
 
-void * Fifo_read(int Num, int buffer)
+void * Fifo_read(int Num, int buffer, int * fd)
 {
-    void * Input=malloc(buffer*sizeof(void));
+    void * Input=calloc(buffer, sizeof(void));
     char fifo_name[100];
     if(!make_fifo_name(Num, fifo_name, sizeof(fifo_name))){
         return NULL;
     }
 
-    int fd=open(fifo_name, O_RDONLY);
-    if(fd<0){
+    *fd=open(fifo_name, O_RDONLY);
+    if(*fd<0){
         perror("open failed:");
         return NULL;
     }
-    if(read(fd, Input, buffer)<0){
+    if(read(*fd, Input, buffer)<0){
         perror("read failed");
+        close(*fd);
         return NULL;
     }
-    close(fd);
     return Input;
 }

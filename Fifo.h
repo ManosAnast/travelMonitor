@@ -48,4 +48,4 @@ int Fifo_write(int Num, void * Input, int size);
  * 
  * return: The fifo's data if everything goes fine. Otherwise, it returns NULL.
 */
-void * Fifo_read(int Num, int buffer);
+void * Fifo_read(int Num, int buffer, int * fd);

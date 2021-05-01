@@ -81,6 +81,33 @@ void VirusInsert(Virus ** VList, char * CitizenId, char * VName, bool Vaccinated
 }
 
 
+void VirusInsertBloom(Virus ** VList, char * VName, bloom filter)
+{
+    Virus * Temp=*VList;
+    while (Temp->Next != NULL){
+        Temp=Temp->Next;
+    }
+    Virus * NewNode=(Virus *)calloc(1, sizeof(Virus));
+    NewNode->filter=filter;
+    NewNode->VirusName=(char *)calloc(strlen(VName), sizeof(char)); strcpy(NewNode->VirusName, VName);
+    NewNode->vaccinated_persons=NULL; NewNode->not_vaccinated_persons=NULL;
+    Temp->Next=NewNode;
+    return;
+}
+
+
+int VirusCount(Virus * VList)
+{
+    Virus * VTemp=VList->Next;
+    int count=0;
+    while (VTemp != NULL){
+        count+=1;
+        VTemp=VTemp->Next;
+    }
+    return count;
+}
+
+
 void VirusSkipList(Virus ** VList)
 {
     Virus * Temp= *VList;

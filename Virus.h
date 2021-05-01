@@ -34,6 +34,10 @@ Virus * VirusInit();
 */
 void VirusInsert(Virus ** VList, char * CitizenId, char * VName, bool Vaccinated, char * DateStr);
 
+void VirusInsertBloom(Virus ** VList, char * VName, bloom filter);
+
+int VirusCount(Virus * VList);
+
 /* Takes a virus and makes the skiplist for every skiplist that the virus has.
  * It makes all the levels that are needed.
  * 

@@ -59,7 +59,7 @@ int main(int argc, char * argv[])
             }
             if( (path_stat.st_mode & S_IFMT) == S_IFDIR){ //Directory
                 Fifo_write(i, input, (strlen(input)+1)*sizeof(char)); 
-                break;
+                // break;
             }
             i+=1;
         }
@@ -70,19 +70,10 @@ int main(int argc, char * argv[])
     Virus * Vlist = VirusInit();
     char * country;
     for (int i = 0; i < numMonitors; i++){
-        // void * country=Fifo_read(i, buffer, &fd);
-        bloom bloomfilter = receive_bloom(i, &country, buffer);
-        VirusInsertBloom(&Vlist, country, bloomfilter);
-        int exist=bloomBitExist(&(bloomfilter), "10");
-        if (exist)
-        {
-            printf("MAYBE\n");
-        }
-        else{
-            printf("NOT VACCINATED\n");
-        }
+        printf("i=%d\n", i);
+        int flag = receive_bloom(i, Vlist, buffer);
     }
-    printf("%s\n", VirusFind(Vlist, country)->VirusName);
+    printf("%d\n", VirusCount(Vlist));
 
     // Unlink all the pipes and wait for the processes.
     for(int i=0;i<numMonitors;i++){ // loop will run n times (n=5)

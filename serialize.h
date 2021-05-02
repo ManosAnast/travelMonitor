@@ -1,11 +1,11 @@
 # include "Interface.h"
 
-int serialize_bloom(bloom filter, char ** CountryName, void ** output);
+int serialize_bloom(bloom filter, char ** VirusName, int count, void ** output);
 
-bloom unserialize_bloom(void * input, char ** CountryName, int buffer, int *size);
+bloom unserialize_bloom(void * input, char ** VirusName, int * count, int buffer, int *size);
 
-bloom receive_bloom(int id, char ** CountryName, int buffer);
+int receive_bloom(int id, Virus * Vlist, int buffer);
 
-int send_bloom(int monitorId, int buffer, bloom filter, char * CountryName);
+int send_bloom(int monitorId, int buffer, Virus * Vlist);
 
 int BytestoRead(int size, int times, int buffer);

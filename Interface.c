@@ -69,7 +69,6 @@ void Start(char * text, int monitorId, int buffer)
         text=FrontTrack(text, ent->d_name);
         if ( strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){
             struct stat path_stat;
-            printf("%s\n", text);
             if( lstat(text, &path_stat) == -1){
                 perror("monitor Stat");
                 return;
@@ -160,32 +159,18 @@ void Start(char * text, int monitorId, int buffer)
 
     nothing();
 
-    Virus * VTemp=Vlist->Next;
-
-    int exist=bloomBitExist(&(VTemp->filter), "10");
-    if (exist)
-    {
-        printf("MAYBE\n");
-    }
-    else{
-        printf("NOT VACCINATED\n");
-    }
     
-    int flag=send_bloom(monitorId, buffer, VTemp->filter, VTemp->VirusName);
+    int flag=send_bloom(monitorId, buffer, Vlist);
     if (flag<0){ // If something goes wrong with fifo_write, free all the allocated memory and return.
         Destroy(Vlist, CList);
         exit(1);
     }
     
-    // while (VTemp !=NULL){
-    //     break;
-    //     VTemp=VTemp->Next;
-    // }
-    
 
     //TTY();    
 
 
+    Destroy(Vlist, CList);
     return;
 }
 

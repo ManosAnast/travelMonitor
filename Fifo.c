@@ -36,7 +36,7 @@ int Fifo_write(int Num, void * Input, int size)
         perror("write failed");
         return -1;
     }
-    close(fd);
+    // close(fd);
     return 0;
 }
 
@@ -48,7 +48,7 @@ void * Fifo_read(int Num, int buffer, int * fd)
         return NULL;
     }
 
-    *fd=open(fifo_name, O_RDONLY);
+    *fd=open(fifo_name, O_RDONLY | O_SYNC);
     if(*fd<0){
         perror("open failed:");
         return NULL;

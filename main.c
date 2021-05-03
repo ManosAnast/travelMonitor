@@ -70,11 +70,9 @@ int main(int argc, char * argv[])
     Virus * Vlist = VirusInit();
     char * country;
     for (int i = 0; i < numMonitors; i++){
-        printf("i=%d\n", i);
-        int flag = receive_bloom(i, Vlist, buffer);
+        int flag = receivebloomtest(i, Vlist, buffer);
     }
-    printf("%d\n", VirusCount(Vlist));
-
+    
     // Unlink all the pipes and wait for the processes.
     for(int i=0;i<numMonitors;i++){ // loop will run n times (n=5)
         char fifo_name[100];

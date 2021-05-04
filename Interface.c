@@ -1,182 +1,113 @@
-# include "serialize.h"
+# include "Interface.h"
 
-void nothing()
+void TTY(Virus * Vlist)
 {
-    return;
-}
-
-char * BackTrack(char * src)
-{
-    int i, length=strlen(src);
-    for (i = length; i > 0 ; i--){
-        if (src[i] == '/' && i !=length-1 ){ // Find the last directory/file and remove it
-            src[i+1]='\0';
+    // int fd;
+    // char fifo_name[100];
+    // if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", 0)<0){
+    //     return;
+    // }
+    // fd=open(fifo_name, O_WRONLY);
+    // if(fd<0){
+    //     perror("open failed:");
+    //     return;
+    // }
+    
+    char **Array;
+    Array=(char**)malloc(9*sizeof(char *)); // make an arry of strings with 30 characters each string.
+    for(int i=0 ; i< 9 ; i++){
+        Array[i]=(char*)malloc(50*sizeof(char));
+    }
+    while (1){
+        char Answer[100];
+        printf("Give a command\n");
+        fgets(Answer,100,stdin);
+        if(( strlen(Answer)>0 ) && (Answer[strlen(Answer) - 1])=='\n'){
+            Answer[strlen(Answer)-1]='\0';
+        }
+        if(!strcmp(Answer, "exit")){
             break;
         }
+        BreakString(&Array, Answer, " ", 9);// Array has the userts input
+        // Checks for commands and if the call is complete.
+        
+        if (!strcmp(Array[0], "travelRequest")){
+            if(!strcmp(Array[1], NULLstring)){
+                printf("Wrong command. vaccineStatus is called like:\ntravelRequest citizenID date countryFrom countryTo virusName \n\n"); continue;
+            }
+            travelRequest(Vlist, Array/*, fd*/);
+        }
+        
+        printf("\n");
     }
-    return src;
-}
-
-
-char * FrontTrack(char * src, char * Next)
-{
-    int length=strlen(src);
-    if( src[length-1] != '/'){ // If the path doesn't have / at the end, add it and the add the new directory/file.
-        strcat(src, "/");
-        strcat(src, Next);
+    for (int i = 0; i < 9; i++){
+        free(Array[i]);
     }
-    else{
-        strcat(src, Next);
-    }
-    return src;
-}
-
-
-void BreakString(char *** Array, char * str, const char * s, int Num)
-{
-    int index=0;
-    char ** Temp=*Array;
-    char * Break=(char *)calloc(strlen(str)+1, sizeof(char)); 
-    strcpy(Break, str); // I use a new string variable because i want the str variable intacted
-    // Use of strtok in order to break the string.
-    char * token = strtok(Break, s);
-    while (token != NULL && index < Num)   //this loop gives the variables that we need to the array from the token(strtok)
-    {
-        strcpy(Temp[index],token);
-        token = strtok(NULL, s);
-        index++;
-    }
-    // If the array isn't "filled" add the nullstring to those that are empty.
-    for (int i = index; i < Num; i++){
-        strcpy(Temp[i], NULLstring);
-    }
-    free(Break);
+    free(Array);
     return;
 }
 
-void Start(char * text, int monitorId, int buffer)
+
+void TTYMonitor(Virus * Vlist, int id, int buffer)
 {
-    int ch,Size=0;
+    int fd;
+    void * Input=calloc(buffer, sizeof(void));
+    char fifo_name[100];
+    if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", id)<0){
+        return;
+    }
+    mkfifo(fifo_name, 0666);
+    fd=open(fifo_name, O_RDONLY);
+    if(fd<0){
+        perror("open failed:");
+        return;
+    }
+    
+    while (1){
+        struct timeval  timeout;
+        fd_set fds;
+        int maxfd=fd;
+        int res=0, s;
+        char buf[256];
 
-    Virus * Vlist=VirusInit();
-    Country * CList=CountryCreate();
-    FILE * fp;
+        FD_ZERO(&fds); // Clear FD set for select
+        FD_SET(fd, &fds);
+        timeout.tv_sec = 60; /* One minute */
+        timeout.tv_usec = 0; /* and no millionths of seconds */
 
-    DIR * dir=opendir(text);
-    struct dirent * ent;
-    int i=0;
-    while ((ent = readdir(dir)) != NULL){
-        text=FrontTrack(text, ent->d_name);
-        if ( strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){
-            struct stat path_stat;
-            if( lstat(text, &path_stat) == -1){
-                perror("monitor Stat");
+        if((s=select(maxfd + 1, &fds, NULL, NULL, &timeout)) < 0){
+            perror("Select"); exit(EXIT_FAILURE);
+        }
+        else if (!s){
+            continue;
+        }
+        
+        if (FD_ISSET(fd, &fds)){
+            // printf("Select ttymonitor 1\n");
+            res=read(fd, Input, buffer);
+            if(res<0){
+                perror("read failed");
+                close(fd);
                 return;
             }
-            else if( (path_stat.st_mode & S_IFMT) == S_IFREG){ //File
-            
-                fp=fopen(text , "r");   
-                // Find the number of entries that the given file has
-                while(1) {
-                    ch = getc(fp);
-                    if( feof(fp) ) { 
-                        break ;
-                    }
-                    if(ch == '\n'){  //Finds how many students are added.
-                        Size+=1;
-                    }
-                }
-                fclose(fp);
-                fp=fopen(text , "r");   
+        }
+        else{
+            continue;
+        }
+        
+        if (res == 0){
+            continue;
+        }
+        // printf("Select ttymonitor 2\n");
+        char ** Array=unserialize_commands(Input);
 
-                // Create the hash table and a string that takes each line
-                HTCreate(Size);
-                char *str;
-                str=(char *)calloc(150,sizeof(char));
-                
-                char **Array=(char**)malloc(8*sizeof(char *)); // make an arry of strings with 50 characters each string.
-                for(int i=0 ; i< 8 ; i++){
-                    Array[i]=(char*)malloc(50*sizeof(char));
-                }
-                const char * s=" "; // Char that indicates the breaking point of the string
-                while (1){
-                    int i=0;
-                    while ((ch = getc(fp)) != EOF) // Read each line of the entries
-                    {
-                        if(ch == '\n'){
-                            break;
-                        }
-                        str[i]=ch;  //str is a string that keeps each line that we get from the file.
-                        i++;
-                    }
-                    str[i]='\0';
-
-                    if( feof(fp) ) { 
-                        break ;
-                    }
-                    
-                    BreakString(&Array, str, s, 8);
-                    /* If the citizen has been vaccinated, yes, insert true. Otherwise insert false*/
-                    if (!strcmp(Array[6],"NO")){
-                        if(HTSearch(atoi(Array[0]), Array[5])!=NULL){ // Check for duplication
-                            printf("Citizen with %d has already been added for %s\n", atoi(Array[0]), Array[5]);
-                        }
-                        else{
-                            int Flag=HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], false, Array[7]);
-                            if (Flag){ // If the hash table insertion had an error, don't insert to the other structs.
-                                VirusInsert(&Vlist, Array[0], Array[5], false , Array[7]);
-                                CountryInsert(&CList, Array[3]);
-                            }
-                        }
-                    }
-                    else if (!strcmp(Array[6],"YES")){
-                        if(HTSearch(atoi(Array[0]), Array[5])!=NULL){ // Check for duplication
-                            printf("Citizen with %d has already been added for %s\n", atoi(Array[0]), Array[5]);
-                        }
-                        else{
-                            int Flag=HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], true, Array[7]);
-                            if(Flag){  // If the hash table insertion had an error, don't insert to the other structs.
-                                VirusInsert(&Vlist, Array[0], Array[5], true, Array[7]);
-                                CountryInsert(&CList, Array[3]);
-                            }
-                        }
-                    }  
-                }
-                fclose(fp);
-                Level=Log(Size);
-                for (int i = 0; i < 8; i++){
-                    free(Array[i]);
-                }
-                free(Array);
-                free(str);
-            
+        for (int i = 0; i < 5; i++){
+            printf("%s\n", Array[i]);
+            if (!strcmp(Array[i], NULLstring)){
+                break;
             }
         }
-        text=BackTrack(text);
-    }
-
-    VirusSkipList(&Vlist);
-
-    nothing();
-
-    
-    int flag=send_bloom(monitorId, buffer, Vlist);
-    if (flag<0){ // If something goes wrong with fifo_write, free all the allocated memory and return.
-        Destroy(Vlist, CList);
-        exit(1);
     }
     
 
-    //TTY();    
-
-
-    Destroy(Vlist, CList);
-    return;
-}
-
-void Destroy(Virus * Vlist, Country * CList)
-{
-    VirusDestroy(&Vlist);
-    CountryDestroy(&CList);
-    HTDestroy();
 }

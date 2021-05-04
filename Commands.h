@@ -1,4 +1,4 @@
-# include "Country.h"
+# include "serialize.h"
 
 /* Implemention of the vaccinateStatusBloom command.
  * vaccinationStatusBloom: Takes an id and a virus. Checks at the virus bloomfilter if the id has been inserted and prints the suitable message.
@@ -9,6 +9,8 @@
  * 
 */
 void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName);
+
+void travelRequest(Virus * Vlist, char ** Array/*, int fd*/);
 
 /* Implemention of the vaccinateStatus command.
  * vaccinationStatus: Takes an id and a virus. Checks at the virus bloomfilter if the id has been inserted and prints the suitable message.

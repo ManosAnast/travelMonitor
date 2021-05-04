@@ -1,4 +1,4 @@
-# include "serialize.h"
+# include "Interface.h"
 
 int Level, BloomNum;
 
@@ -58,6 +58,7 @@ int main(int argc, char * argv[])
                 return -1;
             }
             if( (path_stat.st_mode & S_IFMT) == S_IFDIR){ //Directory
+                printf("%s\n",input);
                 Fifo_write(i, input, (strlen(input)+1)*sizeof(char)); 
                 // break;
             }
@@ -65,17 +66,24 @@ int main(int argc, char * argv[])
         }
         input=BackTrack(input);
     }
-
+    // printf("main1\n");
     // Take bloomfilters
     Virus * Vlist = VirusInit();
     char * country;
     for (int i = 0; i < numMonitors; i++){
         int flag = receivebloomtest(i, Vlist, buffer);
     }
-    
+
+    // printf("main2\n");
+    TTY(Vlist);
+
     // Unlink all the pipes and wait for the processes.
     for(int i=0;i<numMonitors;i++){ // loop will run n times (n=5)
         char fifo_name[100];
+        if(!make_fifo_name(i, fifo_name, sizeof(fifo_name))){
+            return -1;
+        }
+        unlink(fifo_name);
         if(!make_fifo_name(i, fifo_name, sizeof(fifo_name))){
             return -1;
         }

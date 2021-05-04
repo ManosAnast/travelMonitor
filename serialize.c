@@ -1,4 +1,4 @@
-# include "serialize.h"
+# include "Interface.h"
 
 int serialize_bloom(bloom filter, char ** VirusName, int count, void ** output)
 {
@@ -130,4 +130,43 @@ int BytestoRead(int size, int times, int buffer)
         return buffer;
     }
     return Bytes;
+}
+
+void * serialize_commands(char ** Array)
+{
+    void * output;
+    int Length=0;
+    for (int i = 0; i < 5; i++){
+        int size=strlen(Array[i]);
+        memcpy(output+Length, &size, sizeof(int));
+        Length+=sizeof(int);
+        
+        memcpy(output+Length, Array[i], size);
+        Length+=size;
+
+        if (!strcmp(Array[i], NULLstring)){
+            break;
+        }
+        
+    }
+    return output;
+}
+
+char ** unserialize_commands(void * input)
+{
+    int Length=0;
+    char ** Array=(char **)calloc(5, sizeof(char *));
+    for (int i = 0; i < 5; i++){
+        int size; memcpy(&size, input+Length, sizeof(int));
+        Array[i]=(char *)calloc(size, sizeof(char));
+
+        Length+=sizeof(int);
+        memcpy(Array[i], input+Length, size);
+        Length+=size;
+
+        if (!strcmp(Array[i], NULLstring)){
+            break;
+        }
+    }
+    return Array;
 }

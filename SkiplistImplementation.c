@@ -1,4 +1,4 @@
-# include "skiplist.h"
+# include "Interface.h"
 
 SkipList * SLInit()
 {

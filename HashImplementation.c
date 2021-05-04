@@ -1,4 +1,4 @@
-# include "hash.h"
+# include "Interface.h"
 
 int M;
 Citizens ** Table;

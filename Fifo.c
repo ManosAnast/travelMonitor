@@ -1,4 +1,4 @@
-# include "Fifo.h"
+# include "Interface.h"
 
 // Make of a fifo name. This way, the name that the child and parent create, is the same.
 bool make_fifo_name(int id, char * name, size_t name_max) 

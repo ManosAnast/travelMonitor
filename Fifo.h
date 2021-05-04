@@ -11,6 +11,7 @@
 # include <time.h>
 # include <signal.h>
 # include <sys/wait.h>
+# include <sys/select.h>
 # define Parent "travelMonitor"
 
 

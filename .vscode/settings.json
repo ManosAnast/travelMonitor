@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "fifo.h": "c",
-        "interface.h": "c"
+        "interface.h": "c",
+        "serialize.h": "c",
+        "tmcommands.h": "c"
     }
 }

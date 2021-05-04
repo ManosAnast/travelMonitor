@@ -1,4 +1,4 @@
-# include "linkedlist.h"
+# include "Interface.h"
 
 LinkedList * LLInit()
 {

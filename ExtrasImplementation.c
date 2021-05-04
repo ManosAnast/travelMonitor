@@ -165,23 +165,28 @@ Country * CountrySearch(Country * CList, char * Name)
     return CList;
 }
 
-void CountryInsert(Country ** CList, char * CName)
+void CountryInsert(Country ** CList, char * CName, int Id)
 {
     Country * Temp=*CList;
-    while (Temp->Next != NULL && strcmp(Temp->CName, CName)){ 
+    while (Temp->Next != NULL){ 
         Temp=Temp->Next;
     }
-    if (Temp->Next == NULL && strcmp(Temp->CName, CName)){
-        Country * NewNode=(Country *)calloc(1, sizeof(Country));
-        NewNode->CName=(char *)calloc(20, sizeof(char)); 
-        strcpy(NewNode->CName, CName); NewNode->Next=NULL;
-        Temp->Next=NewNode;
-        return;
-    }
-    else if (!strcmp(Temp->CName, NULLstring)){
-        strcpy(Temp->CName, CName);
-    }
+    Country * NewNode=(Country *)calloc(1, sizeof(Country));
+    NewNode->CName=(char *)calloc(strlen(CName)+1, sizeof(char)); NewNode->Id=Id;
+    strcpy(NewNode->CName, CName); NewNode->Next=NULL;
+    Temp->Next=NewNode;
     return;
+}
+
+int CountryId(Country * CList, char * CName)
+{
+    Country * Temp=CList;
+    while (Temp != NULL){
+        if(!strcmp(Temp->CName, CName)){
+            return Temp->Id;
+        }
+    }
+    return -1;
 }
 
 void CountryDestroy(Country ** CList)

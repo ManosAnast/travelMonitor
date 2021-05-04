@@ -9,7 +9,7 @@
 */
 typedef struct Country{
     char * CName;
-    // int Population;
+    int Id;
     struct Country * Next;
 }Country;
 
@@ -33,7 +33,9 @@ Country * CountrySearch(Country * CList, char * Name);
  * Name: Name of the country that we want to insert.
  * 
 */
-void CountryInsert(Country ** CList, char * CName);
+void CountryInsert(Country ** CList, char * CName, int Id);
+
+int CountryId(Country * CList, char * CName);
 
 /* Delete all the country lists nodes.
  * 

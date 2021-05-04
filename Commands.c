@@ -1,5 +1,25 @@
 # include "Interface.h"
 
+void travelRequest(Virus * Vlist, char ** Array/*, int fd*/)
+{
+    char * Id=Array[1]; char * Date=Array[2]; char * CountryTo=Array[3]; char * CountryFrom=Array[4]; char * VirusName=Array[5];
+    Virus * VTemp=Vlist;
+    while (VTemp != NULL){
+        if (!strcmp(VTemp->VirusName, VirusName)){
+            int exist=bloomBitExist(&(VTemp->filter), Id);
+            if (exist){
+                /*Go to country monitor and search there.*/
+                // void * input=serialize_commands(Array);
+                // write(fd, input, sizeof(input));
+                return;
+            }
+        }
+        VTemp=VTemp->Next;
+    }
+    printf("REQUEST REJECTED – YOU ARE NOT VACCINATED\n");
+    return;
+}
+/*
 void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName)
 {
     Virus * Temp = VirusFind(Vlist, VirusName);
@@ -271,4 +291,4 @@ void PrintCat(char * Country, int * Array, bool Age, int Population)
     printf("%s:%d %0.1f%c \n", Country, *Array, (double)*Array/(double)Population * 100, '%');
     *Array=0;
     return;
-}
+}*/

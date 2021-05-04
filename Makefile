@@ -1,9 +1,12 @@
-all: clean main.o serialize.o monitor.o Fifo.o Interface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o
-	gcc main.o serialize.o Fifo.o Interface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o -o travelMonitor
-	gcc monitor.o serialize.o Fifo.o Interface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o -o monitor
+all: clean main.o Interface.o Commands.o serialize.o monitor.o Fifo.o TMInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o
+	gcc main.o Interface.o serialize.o Commands.o Fifo.o TMInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o -o travelMonitor
+	gcc monitor.o serialize.o Commands.o Fifo.o Interface.o TMInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o -o monitor
 
 main.o: main.c
 	gcc -g -c main.c
+
+TMInterface.o: TMInterface.c
+	gcc -g -c TMInterface.c
 
 Interface.o: Interface.c
 	gcc -g -c Interface.c
@@ -29,8 +32,11 @@ Fifo.o: Fifo.c
 monitor.o: monitor.c
 	gcc -g -c monitor.c
 
+Commands.o: Commands.c
+	gcc -g -c Commands.c
+
 serialize.o: serialize.o
 	gcc -g -c serialize.c
 
 clean:
-	rm -f main.o Fifo.o Interface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o serialize.o monitor monitor.o travelMonitor
+	rm -f main.o Fifo.o Interface.o TMInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o serialize.o monitor monitor.o travelMonitor

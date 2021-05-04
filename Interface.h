@@ -1,4 +1,4 @@
-# include "Country.h"
+# include "TMCommands.h"
 
 void nothing();
 
@@ -22,7 +22,7 @@ void Start(char * text, int monitorId, int buffer);
  * CList: Country list. (See Country.h)
  * 
 */
-void TTY(Virus * Vlist, Country * CList);
+void TTY(Virus * Vlist);
 
 /* Takes the virus list and the country list that the program has created and destroys them
  * by calling the appropriate functions.
@@ -32,3 +32,5 @@ void TTY(Virus * Vlist, Country * CList);
  * 
 */
 void Destroy(Virus * Vlist, Country * CList);
+
+void TTYMonitor(Virus * Vlist, int id, int buffer);

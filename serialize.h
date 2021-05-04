@@ -1,4 +1,4 @@
-# include "Interface.h"
+# include "Country.h"
 
 int serialize_bloom(bloom filter, char ** VirusName, int count, void ** output);
 
@@ -11,3 +11,7 @@ int receive_bloom(int id, Virus * Vlist, int buffer, void * input, int fd, int *
 int send_bloom(int monitorId, int buffer, Virus * Vlist);
 
 int BytestoRead(int size, int times, int buffer);
+
+void * serialize_commands(char ** Array);
+
+char ** unserialize_commands(void * input);

@@ -173,9 +173,25 @@ void CountryInsert(Country ** CList, char * CName, int Id)
     }
     Country * NewNode=(Country *)calloc(1, sizeof(Country));
     NewNode->CName=(char *)calloc(strlen(CName)+1, sizeof(char)); NewNode->Id=Id;
-    strcpy(NewNode->CName, CName); NewNode->Next=NULL;
+    strcpy(NewNode->CName, FixName(CName)); NewNode->Next=NULL;
     Temp->Next=NewNode;
     return;
+}
+
+char * FixName(char * CName)
+{
+    int i, size=0;
+    for ( i = strlen(CName); i > 0; i--){
+        if(CName[i]=='/'){
+            break;
+        }
+        size+=1;
+    }
+    char * Country=(char *)calloc(size+1, sizeof(char));
+    for (int j = 0; j < size; j++){
+        Country[j]=CName[++i];
+    }
+    return Country;
 }
 
 int CountryId(Country * CList, char * CName)
@@ -185,6 +201,7 @@ int CountryId(Country * CList, char * CName)
         if(!strcmp(Temp->CName, CName)){
             return Temp->Id;
         }
+        Temp=Temp->Next;
     }
     return -1;
 }

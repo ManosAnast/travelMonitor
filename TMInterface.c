@@ -164,7 +164,7 @@ void Start(char * text, int monitorId, int buffer)
         exit(1);
     }
     
-    // TTYMonitor(Vlist, monitorId, buffer);
+    TTYMonitor(Vlist, monitorId, buffer);
 
 
     Destroy(Vlist, CList);

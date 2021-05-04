@@ -12,6 +12,8 @@ int send_bloom(int monitorId, int buffer, Virus * Vlist);
 
 int BytestoRead(int size, int times, int buffer);
 
-void * serialize_commands(char ** Array);
+void * serialize_commands(char ** Array, int * Length);
+
+void * serialize_commandsint(char ** Array, int * Length);
 
 char ** unserialize_commands(void * input);

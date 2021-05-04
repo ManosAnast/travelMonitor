@@ -35,6 +35,8 @@ Country * CountrySearch(Country * CList, char * Name);
 */
 void CountryInsert(Country ** CList, char * CName, int Id);
 
+char * FixName(char * CName);
+
 int CountryId(Country * CList, char * CName);
 
 /* Delete all the country lists nodes.

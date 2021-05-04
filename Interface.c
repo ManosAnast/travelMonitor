@@ -1,18 +1,7 @@
 # include "Interface.h"
 
-void TTY(Virus * Vlist)
-{
-    // int fd;
-    // char fifo_name[100];
-    // if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", 0)<0){
-    //     return;
-    // }
-    // fd=open(fifo_name, O_WRONLY);
-    // if(fd<0){
-    //     perror("open failed:");
-    //     return;
-    // }
-    
+void TTY(Virus * Vlist, Country * Clist)
+{ 
     char **Array;
     Array=(char**)malloc(9*sizeof(char *)); // make an arry of strings with 30 characters each string.
     for(int i=0 ; i< 9 ; i++){
@@ -35,7 +24,7 @@ void TTY(Virus * Vlist)
             if(!strcmp(Array[1], NULLstring)){
                 printf("Wrong command. vaccineStatus is called like:\ntravelRequest citizenID date countryFrom countryTo virusName \n\n"); continue;
             }
-            travelRequest(Vlist, Array/*, fd*/);
+            travelRequest(Vlist, Array, Clist);
         }
         
         printf("\n");
@@ -51,19 +40,19 @@ void TTY(Virus * Vlist)
 void TTYMonitor(Virus * Vlist, int id, int buffer)
 {
     int fd;
-    void * Input=calloc(buffer, sizeof(void));
     char fifo_name[100];
     if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", id)<0){
         return;
     }
     mkfifo(fifo_name, 0666);
-    fd=open(fifo_name, O_RDONLY);
-    if(fd<0){
-        perror("open failed:");
-        return;
-    }
     
     while (1){
+        void * Input=calloc(buffer, sizeof(void)); 
+        fd=open(fifo_name, O_RDONLY);
+        if(fd<0){
+            perror("open failed:");
+            return;
+        }
         struct timeval  timeout;
         fd_set fds;
         int maxfd=fd;
@@ -98,13 +87,48 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
         if (res == 0){
             continue;
         }
-        // printf("Select ttymonitor 2\n");
+        close(fd);
+
         char ** Array=unserialize_commands(Input);
 
         for (int i = 0; i < 5; i++){
             printf("%s\n", Array[i]);
             if (!strcmp(Array[i], NULLstring)){
                 break;
+            }
+        }
+
+        if (!strcmp(Array[0], "travelRequest")){
+            if(!strcmp(Array[1], NULLstring)){
+                printf("Wrong command. vaccineStatus is called like:\ntravelRequest citizenID date countryFrom countryTo virusName \n\n"); continue;
+            }
+            Date * VaccDate=VaccinateStatus(Vlist, Array[1], Array[5]);
+            int Length;
+            fd=open(fifo_name, O_WRONLY);
+            if(fd<0){
+                perror("open failed:");
+                return;
+            }
+            if (VaccDate==NULL){
+                char ** Answer=(char **)calloc(1, sizeof(char));
+                Answer[0]=(char *)calloc(2, sizeof(char));
+                strcpy(Answer[0], "NO");
+                void * input=serialize_commands(Answer, &Length);
+                if(write(fd, input, Length)<0){
+                    perror("write failed"); return;
+                }
+                free(Answer[0]); free(Answer);
+            }
+            else{
+                char ** Answer=(char **)calloc(3, sizeof(char *));
+                Answer[0]=(char *)calloc(2, sizeof(char));sprintf(Answer[0], "%d", VaccDate->Days);
+                Answer[1]=(char *)calloc(2, sizeof(char));sprintf(Answer[1], "%d", VaccDate->Month);
+                Answer[2]=(char *)calloc(4, sizeof(char));sprintf(Answer[2], "%d", VaccDate->Year);
+                void * input=serialize_commands(Answer, &Length);
+                if(write(fd, input, Length)<0){
+                    perror("write failed"); return;
+                }
+                free(Answer[0]); free(Answer[1]); free(Answer[2]); free(Answer);
             }
         }
     }

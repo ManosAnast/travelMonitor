@@ -46,6 +46,7 @@ int main(int argc, char * argv[])
     }
 
     // Traverse the input directory and assign the countries to the monitors
+    Country * Clist=CountryCreate();
     DIR * dir=opendir(input);
     struct dirent * ent;
     int i=0;
@@ -58,7 +59,8 @@ int main(int argc, char * argv[])
                 return -1;
             }
             if( (path_stat.st_mode & S_IFMT) == S_IFDIR){ //Directory
-                printf("%s\n",input);
+                CountryInsert(&Clist, input, i);
+                printf("%s\n", input);
                 Fifo_write(i, input, (strlen(input)+1)*sizeof(char)); 
                 // break;
             }
@@ -74,8 +76,8 @@ int main(int argc, char * argv[])
         int flag = receivebloomtest(i, Vlist, buffer);
     }
 
-    // printf("main2\n");
-    TTY(Vlist);
+    printf("%d\n", CountryId(Clist, "Greece"));
+    TTY(Vlist, Clist);
 
     // Unlink all the pipes and wait for the processes.
     for(int i=0;i<numMonitors;i++){ // loop will run n times (n=5)
@@ -84,7 +86,7 @@ int main(int argc, char * argv[])
             return -1;
         }
         unlink(fifo_name);
-        if(!make_fifo_name(i, fifo_name, sizeof(fifo_name))){
+        if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", i)<0){
             return -1;
         }
         unlink(fifo_name);
@@ -93,6 +95,7 @@ int main(int argc, char * argv[])
     
     // Start(File);
 
+    Destroy(Vlist, Clist);
     free(input);
 
     return 0;

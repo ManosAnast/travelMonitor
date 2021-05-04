@@ -1,16 +1,50 @@
 # include "Interface.h"
 
-void travelRequest(Virus * Vlist, char ** Array/*, int fd*/)
+void travelRequest(Virus * Vlist, char ** Array, Country * Clist)
 {
-    char * Id=Array[1]; char * Date=Array[2]; char * CountryTo=Array[3]; char * CountryFrom=Array[4]; char * VirusName=Array[5];
+    char * Id=Array[1]; char * Date=Array[2]; char * CountryFrom=Array[3]; char * CountryTo=Array[4]; char * VirusName=Array[5];
     Virus * VTemp=Vlist;
     while (VTemp != NULL){
         if (!strcmp(VTemp->VirusName, VirusName)){
             int exist=bloomBitExist(&(VTemp->filter), Id);
             if (exist){
                 /*Go to country monitor and search there.*/
-                // void * input=serialize_commands(Array);
-                // write(fd, input, sizeof(input));
+                int fd;
+                char fifo_name[100];
+                int monitorId=CountryId(Clist, CountryFrom);
+                // printf("%d\n", monitorId);
+                printf("travel request 1\n");
+                if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", monitorId)<0){
+                    return;
+                }
+                printf("travel request 2\n");
+                fd=open(fifo_name, O_WRONLY);
+                printf("travel request 3\n");
+                if(fd<0){
+                    perror("open failed:");
+                    return;
+                }
+                printf("travel request 4\n");
+                int Length;
+                void * input=serialize_commands(Array, &Length);
+                printf("travel request %d\n", Length);
+                if(write(fd, input, Length)<0){
+                    perror("write failed"); return;
+                }
+                close(fd);
+                void * Input=calloc(/*buffer*/100, sizeof(void)); 
+                fd=open(fifo_name, O_RDONLY);
+                if(fd<0){
+                    perror("open failed:");
+                    return;
+                }
+                char ** Array=unserialize_commands(Input);
+                for (int i = 0; i < 3; i++){
+                    printf("%s\n", Array[i]);
+                    if (!strcmp(Array[i], NULLstring)){
+                        break;
+                    }
+                }
                 return;
             }
         }
@@ -19,7 +53,7 @@ void travelRequest(Virus * Vlist, char ** Array/*, int fd*/)
     printf("REQUEST REJECTED – YOU ARE NOT VACCINATED\n");
     return;
 }
-/*
+
 void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName)
 {
     Virus * Temp = VirusFind(Vlist, VirusName);
@@ -35,21 +69,23 @@ void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName)
     return;
 }
 
-void VaccinateStatus(Virus * Vlist, char * Id, char * VirusName)
+Date * VaccinateStatus(Virus * Vlist, char * Id, char * VirusName)
 {
     Virus * Temp = VirusFind(Vlist, VirusName);
     LinkedList * exist = SLSearch(Temp->vaccinated_persons, atoi(Id));
     if (exist != NULL)
     {
-        printf("VACCINATED ON "); 
-        Citizens * Rec=HTSearch(atoi(Id), VirusName); PrintDate(Rec->Timing);
+        // printf("VACCINATED ON "); 
+        Citizens * Rec=HTSearch(atoi(Id), VirusName); 
+        return Rec->Timing;
     }
     else{
-        printf("NOT VACCINATED\n");
+        return NULL;
     }
-    return;
+    return NULL;
 }
 
+/*
 void ListNonVaccinated(Virus * Vlist, char * VName)
 {
     Virus * Temp=Vlist->Next;
@@ -291,4 +327,5 @@ void PrintCat(char * Country, int * Array, bool Age, int Population)
     printf("%s:%d %0.1f%c \n", Country, *Array, (double)*Array/(double)Population * 100, '%');
     *Array=0;
     return;
-}*/
+}
+*/

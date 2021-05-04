@@ -10,7 +10,7 @@
 */
 void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName);
 
-void travelRequest(Virus * Vlist, char ** Array/*, int fd*/);
+void travelRequest(Virus * Vlist, char ** Array, Country * Clist);
 
 /* Implemention of the vaccinateStatus command.
  * vaccinationStatus: Takes an id and a virus. Checks at the virus bloomfilter if the id has been inserted and prints the suitable message.
@@ -21,7 +21,7 @@ void travelRequest(Virus * Vlist, char ** Array/*, int fd*/);
  * VirusName: Name of the virus that we want to check.
  * 
 */
-void VaccinateStatus(Virus * Vlist, char * Id, char * VirusName);
+Date * VaccinateStatus(Virus * Vlist, char * Id, char * VirusName);
 
 /* Implemention of the list-nonVaccinated-Persons command.
  * list-nonVaccinated-Persons: Takes a virus and print all the citizens that hasn't been vaccinated.

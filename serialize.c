@@ -132,22 +132,33 @@ int BytestoRead(int size, int times, int buffer)
     return Bytes;
 }
 
-void * serialize_commands(char ** Array)
+void * serialize_commands(char ** Array, int * Length)
 {
-    void * output;
-    int Length=0;
-    for (int i = 0; i < 5; i++){
+    void * output=malloc(100*sizeof(void));
+    *Length=0;
+    for (int i = 0; i < 6; i++){
         int size=strlen(Array[i]);
-        memcpy(output+Length, &size, sizeof(int));
-        Length+=sizeof(int);
+        memcpy(output+*Length, &size, sizeof(int));
+        *Length+=sizeof(int);
         
-        memcpy(output+Length, Array[i], size);
-        Length+=size;
+        memcpy(output+*Length, Array[i], size);
+        *Length+=size;
 
         if (!strcmp(Array[i], NULLstring)){
             break;
         }
         
+    }
+    return output;
+}
+
+void * serialize_commandsint(char ** Array, int * Length)
+{
+    void * output=malloc(100*sizeof(void));
+    *Length=0;
+    for (int i = 0; i < 3; i++){
+        memcpy(output+*Length, Array[i], sizeof(int));
+        *Length+=sizeof(int);
     }
     return output;
 }

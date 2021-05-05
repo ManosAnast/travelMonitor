@@ -11,34 +11,10 @@ void travelRequest(Virus * Vlist, char ** Array, Country * Clist)
                 /*Go to country monitor and search there.*/
                 int fd;
                 int monitorId=CountryId(Clist, CountryFrom);
-                // char fifo_name[100];
-                // if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", monitorId)<0){
-                //     return;
-                // }
-                // fd=open(fifo_name, O_WRONLY);
-                // if(fd<0){
-                //     perror("open failed:");
-                //     return;
-                // }
                 int Length;
                 void * input=serialize_commands(Array, &Length);
                 Fifo_writeCommands(monitorId, input, Length, &fd);
-                // if(write(fd, input, Length)<0){
-                //     perror("write failed"); return;
-                // }
                 close(fd);
-                // void * Input=calloc(/*buffer*/100, sizeof(void)); 
-                // fd=open(fifo_name, O_RDONLY);
-                // if(fd<0){
-                //     perror("open failed:");
-                //     return;
-                // }
-                // int res=read(fd, Input, 100);
-                // if(res<0){
-                //     perror("read failed");
-                //     close(fd);
-                //     return;
-                // }
                 void * Input=Fifo_readCommands(monitorId, 100, &fd);
                 char ** Answer=unserialize_commands(Input);
                 if(!strcmp(Answer[0], "NO")){

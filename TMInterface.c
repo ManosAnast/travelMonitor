@@ -174,3 +174,57 @@ void Destroy(Virus * Vlist, Country * CList)
     CountryDestroy(&CList);
     HTDestroy();
 }
+
+void MCInit(MonitorCheck * MonitorList)
+{
+    MonitorList=(MonitorCheck *)calloc(1, sizeof(MonitorCheck));
+    MonitorList->VirusName=(char *)calloc(strlen(NULLstring), sizeof(char));
+    strcpy(MonitorList->VirusName, NULLstring);
+    MonitorList->Accepted=0; MonitorList->Rejected=0;
+    MonitorList->Next=NULL;
+    return;
+}
+
+void MCInsert(MonitorCheck * MonitorList, char * VName, bool Accepted, bool Rejected)
+{
+    MonitorCheck * Temp=MonitorList;
+    while (Temp->Next!=NULL){
+        if ( !strcmp(Temp->VirusName, VName) ){
+            Temp->Accepted+=(int)Accepted; Temp->Rejected+=(int)Rejected;
+            return;
+        }
+        Temp=Temp->Next;
+    }
+    MonitorCheck * NewNode=(MonitorCheck *)calloc(1, sizeof(MonitorCheck));
+    NewNode->VirusName=(char *)calloc(strlen(VName), sizeof(char));
+    strcpy(NewNode->VirusName, VName);
+    NewNode->Accepted=(int)Accepted; NewNode->Rejected=(int)Rejected;
+    NewNode->Next=NULL;
+    MonitorList->Next=NewNode;
+    return;
+}
+
+void MCPrint(MonitorCheck * MonitorList, char * VName)
+{
+    MonitorCheck * Temp=MonitorList;
+    while (Temp->Next!=NULL){
+        if ( !strcmp(Temp->VirusName, VName) ){
+            printf("TOTAL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", Temp->Accepted+Temp->Rejected, Temp->Accepted, Temp->Rejected);
+            return;
+        }
+        Temp=Temp->Next;
+    }
+    printf("There is no %s virus at this country\n", VName);
+    return;
+}
+
+void MCDestroy(MonitorCheck * MonitorList)
+{
+    MonitorCheck * Current=MonitorList, *Next;
+    while (Current!= NULL){
+        Next=Current->Next;
+        free(Current->VirusName); free(Current);
+        Current=Next;
+    }
+    return;
+}

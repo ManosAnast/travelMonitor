@@ -15,6 +15,14 @@ void TTY(Virus * Vlist, Country * Clist)
             Answer[strlen(Answer)-1]='\0';
         }
         if(!strcmp(Answer, "exit")){
+            BreakString(&Array, Answer, " ", 2);// Array has the userts input
+            int fd, Length;
+            Clist=Clist->Next;
+            while(Clist != NULL){
+                void * input=serialize_commands(Array, &Length);
+                Fifo_writeCommands(Clist->Id, input, Length, &fd);
+                Clist=Clist->Next;
+            }  
             break;
         }
         BreakString(&Array, Answer, " ", 9);// Array has the userts input
@@ -46,6 +54,8 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
     }
     mkfifo(fifo_name, 0666);
     
+    MonitorCheck * MonitorList;
+    MCInit(MonitorList);
     while (1){
         void * Input=calloc(buffer, sizeof(void)); 
         fd=open(fifo_name, O_RDONLY);
@@ -98,45 +108,11 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
             break;
         }
         if (!strcmp(Array[0], "travelRequest")){
-            char * Id=(char *)calloc(strlen(Array[1]), sizeof(char)); 
-            char * VirusName=(char *)calloc(strlen(Array[5]), sizeof(char));
-            strcpy(Id, Array[1]); strcpy(VirusName, Array[5]);
+            travelRequestMonitor(id, Array[1], Array[5]);
             for (int i = 0; i < 5; i++){
                 free(Array[i]);
             }
             free(Array);
-            Date * VaccDate;
-
-            Citizens * Rec=HTSearch(atoi(Id), VirusName); 
-            if (Rec->Vaccinated){
-                VaccDate=Rec->Timing;
-                PrintDate(VaccDate);
-            }
-            else{
-                VaccDate=NULL;
-            }
-
-            int Length;
-            if (VaccDate==NULL){
-                char ** Answer=(char **)calloc(2, sizeof(char));
-                Answer[0]=(char *)calloc(2, sizeof(char));
-                strcpy(Answer[0], "NO");
-                Answer[1]=(char *)calloc(strlen(NULLstring), sizeof(char));strcpy(Answer[3], NULLstring);
-                void * input=serialize_commands(Answer, &Length);
-                Fifo_writeCommands(id, input, Length, &fd);
-                free(Answer[0]); free(Answer);
-            }
-            else{
-                char ** Answer=(char **)calloc(4, sizeof(char *));
-                Answer[0]=(char *)calloc(2, sizeof(char));sprintf(Answer[0], "%d", VaccDate->Days);
-                Answer[1]=(char *)calloc(2, sizeof(char));sprintf(Answer[1], "%d", VaccDate->Month);
-                Answer[2]=(char *)calloc(4, sizeof(char));sprintf(Answer[2], "%d", VaccDate->Year);
-                Answer[3]=(char *)calloc(strlen(NULLstring), sizeof(char));strcpy(Answer[3], NULLstring);
-                void * input=serialize_commands(Answer, &Length);
-                Fifo_writeCommands(id, input, Length, &fd);
-                free(Answer[0]); free(Answer[1]); free(Answer[2]); free(Answer);
-            }
-            close(fd);
         }
         
     }

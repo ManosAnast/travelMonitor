@@ -60,3 +60,44 @@ void * Fifo_read(int Num, int buffer, int * fd)
     }
     return Input;
 }
+
+int Fifo_writeCommands(int Num, void * Input, int size, int * fd)
+{
+    char fifo_name[100];
+    if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", Num)<0){
+        return -1;
+    }
+
+    *fd=open(fifo_name, O_WRONLY);
+    if(*fd<0 && errno == ENXIO){
+        perror("open failed:");
+        return -1;
+    }
+
+    if(write(*fd, (char *)Input, size)<0){
+        perror("write failed");
+        return -1;
+    }
+    return 0;
+}
+
+void * Fifo_readCommands(int Num, int buffer, int * fd)
+{
+    void * Input=calloc(buffer, sizeof(void));
+    char fifo_name[100];
+    if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", Num)<0){
+        return NULL;
+    }
+
+    *fd=open(fifo_name, O_RDONLY);
+    if(*fd<0){
+        perror("open failed:");
+        return NULL;
+    }
+    if(read(*fd, Input, buffer)<0){
+        perror("read failed");
+        close(*fd);
+        return NULL;
+    }
+    return Input;
+}

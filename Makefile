@@ -39,4 +39,4 @@ serialize.o: serialize.o
 	gcc -g -c serialize.c
 
 clean:
-	rm -f main.o Fifo.o Interface.o TMInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o serialize.o monitor monitor.o travelMonitor
+	rm -f main.o Fifo.o Interface.o Commands.o TMInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o serialize.o monitor monitor.o travelMonitor

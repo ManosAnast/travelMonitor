@@ -10,41 +10,37 @@ void travelRequest(Virus * Vlist, char ** Array, Country * Clist)
             if (exist){
                 /*Go to country monitor and search there.*/
                 int fd;
-                char fifo_name[100];
                 int monitorId=CountryId(Clist, CountryFrom);
-                if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", monitorId)<0){
-                    return;
-                }
-                fd=open(fifo_name, O_WRONLY);
-                if(fd<0){
-                    perror("open failed:");
-                    return;
-                }
+                // char fifo_name[100];
+                // if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", monitorId)<0){
+                //     return;
+                // }
+                // fd=open(fifo_name, O_WRONLY);
+                // if(fd<0){
+                //     perror("open failed:");
+                //     return;
+                // }
                 int Length;
                 void * input=serialize_commands(Array, &Length);
-                if(write(fd, input, Length)<0){
-                    perror("write failed"); return;
-                }
-                close(fd);
-                void * Input=calloc(/*buffer*/100, sizeof(void)); 
-                fd=open(fifo_name, O_RDONLY);
-                if(fd<0){
-                    perror("open failed:");
-                    return;
-                }
-                int res=read(fd, Input, 100);
-                if(res<0){
-                    perror("read failed");
-                    close(fd);
-                    return;
-                }
-                char ** Answer=unserialize_commands(Input);
-                // printf("%s-%s-%s", Array[0], Array[1], Array[2]);
-                // for (int i = 0; i < 3; i++){
-                //     printf("%s\n", Array[i]);
+                Fifo_writeCommands(monitorId, input, Length, &fd);
+                // if(write(fd, input, Length)<0){
+                //     perror("write failed"); return;
                 // }
-                
-                printf("travel monitor\n");
+                close(fd);
+                // void * Input=calloc(/*buffer*/100, sizeof(void)); 
+                // fd=open(fifo_name, O_RDONLY);
+                // if(fd<0){
+                //     perror("open failed:");
+                //     return;
+                // }
+                // int res=read(fd, Input, 100);
+                // if(res<0){
+                //     perror("read failed");
+                //     close(fd);
+                //     return;
+                // }
+                void * Input=Fifo_readCommands(monitorId, 100, &fd);
+                char ** Answer=unserialize_commands(Input);
                 if(!strcmp(Answer[0], "NO")){
                     printf("REQUEST REJECTED – YOU ARE NOT VACCINATED\n");
                     close(fd);

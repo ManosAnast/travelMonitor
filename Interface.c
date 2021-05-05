@@ -72,7 +72,6 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
         }
         
         if (FD_ISSET(fd, &fds)){
-            printf("Select ttymonitor monitor%d\n", id);
             res=read(fd, Input, buffer);
             if(res<0){
                 perror("read failed");
@@ -91,14 +90,6 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
 
         char ** Array=unserialize_commands(Input);
 
-        for (int i = 0; i < 6; i++){
-            printf("%s\n", Array[i]);
-            if (!strcmp(Array[i], NULLstring)){
-                break;
-            }
-        }
-        
-
         if(!strcmp(Array[0], "exit")){
             for (int i = 0; i < 6; i++){
                 free(Array[i]);
@@ -114,12 +105,9 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
                 free(Array[i]);
             }
             free(Array);
-            Date * VaccDate/*=(Date *)calloc(1, sizeof(Date))*/;
-            printf("Before vaccinateStatus 1\n");
+            Date * VaccDate;
 
             Citizens * Rec=HTSearch(atoi(Id), VirusName); 
-            printf("Before vaccinateStatus 2\n");
-            printf("name:%s, id:%d\n", VirusName, atoi(Id));
             if (Rec->Vaccinated){
                 VaccDate=Rec->Timing;
                 PrintDate(VaccDate);
@@ -129,21 +117,13 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
             }
 
             int Length;
-            fd=open(fifo_name, O_WRONLY);
-            if(fd<0){
-                perror("open failed:");
-                return;
-            }
-            printf("VaccDate %d\n", VaccDate==NULL);
             if (VaccDate==NULL){
                 char ** Answer=(char **)calloc(2, sizeof(char));
                 Answer[0]=(char *)calloc(2, sizeof(char));
                 strcpy(Answer[0], "NO");
                 Answer[1]=(char *)calloc(strlen(NULLstring), sizeof(char));strcpy(Answer[3], NULLstring);
                 void * input=serialize_commands(Answer, &Length);
-                if(write(fd, input, Length)<0){
-                    perror("write failed"); return;
-                }
+                Fifo_writeCommands(id, input, Length, &fd);
                 free(Answer[0]); free(Answer);
             }
             else{
@@ -153,9 +133,7 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
                 Answer[2]=(char *)calloc(4, sizeof(char));sprintf(Answer[2], "%d", VaccDate->Year);
                 Answer[3]=(char *)calloc(strlen(NULLstring), sizeof(char));strcpy(Answer[3], NULLstring);
                 void * input=serialize_commands(Answer, &Length);
-                if(write(fd, input, Length)<0){
-                    perror("write failed"); return;
-                }
+                Fifo_writeCommands(id, input, Length, &fd);
                 free(Answer[0]); free(Answer[1]); free(Answer[2]); free(Answer);
             }
             close(fd);

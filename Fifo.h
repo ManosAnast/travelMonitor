@@ -50,3 +50,20 @@ int Fifo_write(int Num, void * Input, int size);
  * return: The fifo's data if everything goes fine. Otherwise, it returns NULL.
 */
 void * Fifo_read(int Num, int buffer, int * fd);
+
+/* Write to fifo.
+ *
+ * Num: Number of monitor that the fifo is for.
+ * Input: Data that we want to write to fifo.
+ * 
+ * return: 0 if everything goes fine. Otherwise, it returns -1.
+*/
+int Fifo_writeCommands(int Num, void * Input, int size, int * fd);
+
+/* Read from fifo.
+ *
+ * Num: Number of monitor that the fifo is for.
+ * 
+ * return: The fifo's data if everything goes fine. Otherwise, it returns NULL.
+*/
+void * Fifo_readCommands(int Num, int buffer, int * fd);

@@ -49,18 +49,30 @@ void PrintDate(Date * Timing)
 
 bool CheckDate(Date * Timing1, Date * Timing2)
 {
-    if (Timing1->Year > Timing2->Year){
-        return true;                
-    }
-    else if (Timing1->Year == Timing2->Year){
-        if (Timing1->Month > Timing2->Month){
-            return true;
+    if (Timing1->Year < Timing2->Year){
+        if (Timing1->Month > Timing2->Month - 6){
+            return false;
         }
-        else if (Timing1->Month == Timing2->Month){
+        else if (Timing1->Month -6 == Timing2->Month){
             if (Timing1->Days >= Timing2->Days){
                 return true;
-            }            
+            }
+            return false;
         }
+        return true;                
+    }
+    
+    if (Timing1->Year == Timing2->Year){
+        if (Timing1->Month > Timing2->Month - 6){
+            return false;
+        }
+        else if (Timing1->Month == Timing2->Month - 6){
+            if (Timing1->Days >= Timing2->Days){
+                return true;
+            }
+            return false;   
+        }
+        return true;
     }
     
     return false;

@@ -2,7 +2,7 @@
 
 void travelRequest(Virus * Vlist, char ** Array, Country * Clist)
 {
-    char * Id=Array[1]; char * Date=Array[2]; char * CountryFrom=Array[3]; char * CountryTo=Array[4]; char * VirusName=Array[5];
+    char * Id=Array[1]; char * TravelDate=Array[2]; char * CountryFrom=Array[3]; char * CountryTo=Array[4]; char * VirusName=Array[5];
     Virus * VTemp=Vlist;
     while (VTemp != NULL){
         if (!strcmp(VTemp->VirusName, VirusName)){
@@ -12,22 +12,16 @@ void travelRequest(Virus * Vlist, char ** Array, Country * Clist)
                 int fd;
                 char fifo_name[100];
                 int monitorId=CountryId(Clist, CountryFrom);
-                // printf("%d\n", monitorId);
-                printf("travel request 1\n");
                 if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", monitorId)<0){
                     return;
                 }
-                printf("travel request 2\n");
                 fd=open(fifo_name, O_WRONLY);
-                printf("travel request 3\n");
                 if(fd<0){
                     perror("open failed:");
                     return;
                 }
-                printf("travel request 4\n");
                 int Length;
                 void * input=serialize_commands(Array, &Length);
-                printf("travel request %d\n", Length);
                 if(write(fd, input, Length)<0){
                     perror("write failed"); return;
                 }
@@ -38,13 +32,37 @@ void travelRequest(Virus * Vlist, char ** Array, Country * Clist)
                     perror("open failed:");
                     return;
                 }
-                char ** Array=unserialize_commands(Input);
-                for (int i = 0; i < 3; i++){
-                    printf("%s\n", Array[i]);
-                    if (!strcmp(Array[i], NULLstring)){
-                        break;
-                    }
+                int res=read(fd, Input, 100);
+                if(res<0){
+                    perror("read failed");
+                    close(fd);
+                    return;
                 }
+                char ** Answer=unserialize_commands(Input);
+                // printf("%s-%s-%s", Array[0], Array[1], Array[2]);
+                // for (int i = 0; i < 3; i++){
+                //     printf("%s\n", Array[i]);
+                // }
+                
+                printf("travel monitor\n");
+                if(!strcmp(Answer[0], "NO")){
+                    printf("REQUEST REJECTED – YOU ARE NOT VACCINATED\n");
+                    close(fd);
+                    return;
+                }
+                else{
+                    char * CitizenDate=(char *)calloc(10, sizeof(char));
+                    nothing();
+                    sprintf(CitizenDate, "%s-%s-%s", Answer[0], Answer[1], Answer[2]);
+                    Date * VaccDate=CreateDate(CitizenDate);
+                    if(CheckDate(VaccDate, CreateDate(TravelDate))){
+                        printf("REQUEST ACCEPTED – HAPPY TRAVELS\n");
+                        close(fd);
+                        return;
+                    }
+                    printf("REQUEST REJECTED – YOU WILL NEED ANOTHER VACCINATION BEFORE TRAVEL DATE\n");
+                }
+                close(fd);
                 return;
             }
         }

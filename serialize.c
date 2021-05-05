@@ -166,15 +166,15 @@ void * serialize_commandsint(char ** Array, int * Length)
 char ** unserialize_commands(void * input)
 {
     int Length=0;
-    char ** Array=(char **)calloc(5, sizeof(char *));
-    for (int i = 0; i < 5; i++){
-        int size; memcpy(&size, input+Length, sizeof(int));
+    char ** Array=(char **)calloc(6, sizeof(char *));
+    int size; 
+    for (int i = 0; i < 6; i++){
+        memcpy(&size, input+Length, sizeof(int));
         Array[i]=(char *)calloc(size, sizeof(char));
 
         Length+=sizeof(int);
         memcpy(Array[i], input+Length, size);
         Length+=size;
-
         if (!strcmp(Array[i], NULLstring)){
             break;
         }

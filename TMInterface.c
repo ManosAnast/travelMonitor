@@ -154,9 +154,6 @@ void Start(char * text, int monitorId, int buffer)
     }
 
     VirusSkipList(&Vlist);
-
-    nothing();
-
     
     int flag=send_bloom(monitorId, buffer, Vlist);
     if (flag<0){ // If something goes wrong with fifo_write, free all the allocated memory and return.

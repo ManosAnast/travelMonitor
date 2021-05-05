@@ -126,6 +126,7 @@ Virus * VirusFind(Virus * Vlist, char * VirusName)
 {
     Virus * Temp= Vlist;
     while (Temp != NULL){
+        printf("VirusName: %s\n", Temp->VirusName);
         if (!strcmp(Temp->VirusName, VirusName)){
             return Temp;
         }

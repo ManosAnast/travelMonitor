@@ -7,6 +7,7 @@ void TTY(Virus * Vlist, Country * Clist)
     for(int i=0 ; i< 9 ; i++){
         Array[i]=(char*)malloc(50*sizeof(char));
     }
+    MonitorCheck * MonitorList=MCInit();
     while (1){
         char Answer[100];
         printf("Give a command\n");
@@ -28,12 +29,23 @@ void TTY(Virus * Vlist, Country * Clist)
         BreakString(&Array, Answer, " ", 9);// Array has the userts input
         // Checks for commands and if the call is complete.
         
-        if (!strcmp(Array[0], "travelRequest")){
+        if ( !strcmp(Array[0], "travelRequest") ){
             if(!strcmp(Array[1], NULLstring)){
                 printf("Wrong command. vaccineStatus is called like:\ntravelRequest citizenID date countryFrom countryTo virusName \n\n"); continue;
             }
-            travelRequest(Vlist, Array, Clist);
+            travelRequest(MonitorList, Vlist, Array, Clist);
+            nothing();
         }
+        else if ( !strcmp(Array[0], "travelStat") ){
+            travelStat(MonitorList, Clist, Array[1], Array[2], Array[3], Array[4]);
+        }
+        // else if ( !strcmp(Array[0], "searchVaccinationStatus") ){
+        //     if(!strcmp(Array[1], NULLstring)){
+        //         printf("Wrong command. vaccineStatus is called like:\nsearchVaccinationStatus citizenID\n\n"); continue;
+        //     }
+        //     searchVaccinationStatus(Vlist, Clist, Array);
+        // }
+        
         
         printf("\n");
     }

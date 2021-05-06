@@ -1,6 +1,6 @@
 # include "Interface.h"
 
-void travelRequest(Virus * Vlist, char ** Array, Country * Clist)
+void travelRequest(MonitorCheck * MonitorList, Virus * Vlist, char ** Array, Country * Clist)
 {
     char * Id=Array[1]; char * TravelDate=Array[2]; char * CountryFrom=Array[3]; char * CountryTo=Array[4]; char * VirusName=Array[5];
     Virus * VTemp=Vlist;
@@ -17,22 +17,25 @@ void travelRequest(Virus * Vlist, char ** Array, Country * Clist)
                 close(fd);
                 void * Input=Fifo_readCommands(monitorId, 100, &fd);
                 char ** Answer=unserialize_commands(Input);
+                Date * RequestDate=CreateDate(TravelDate);
                 if(!strcmp(Answer[0], "NO")){
                     printf("REQUEST REJECTED – YOU ARE NOT VACCINATED\n");
+                    MCInsert(MonitorList, VirusName, CountryFrom, false, true, RequestDate);
                     close(fd);
                     return;
                 }
                 else{
                     char * CitizenDate=(char *)calloc(10, sizeof(char));
-                    nothing();
                     sprintf(CitizenDate, "%s-%s-%s", Answer[0], Answer[1], Answer[2]);
                     Date * VaccDate=CreateDate(CitizenDate);
-                    if(CheckDate(VaccDate, CreateDate(TravelDate))){
+                    if(CheckDateDiffer(VaccDate, RequestDate)){
                         printf("REQUEST ACCEPTED – HAPPY TRAVELS\n");
+                        MCInsert(MonitorList, VirusName, CountryFrom, true, false, RequestDate);
                         close(fd);
                         return;
                     }
                     printf("REQUEST REJECTED – YOU WILL NEED ANOTHER VACCINATION BEFORE TRAVEL DATE\n");
+                    MCInsert(MonitorList, VirusName, CountryFrom, false, true, RequestDate);
                 }
                 close(fd);
                 return;
@@ -43,6 +46,79 @@ void travelRequest(Virus * Vlist, char ** Array, Country * Clist)
     printf("REQUEST REJECTED – YOU ARE NOT VACCINATED\n");
     return;
 }
+
+void travelStat(MonitorCheck * MonitorList, Country * Clist, char * VirusName, char * Date1, char * Date2, char * CountryName)
+{
+    Date * Timing1=CreateDate(Date1), * Timing2=CreateDate(Date2);
+    if ( !strcmp(CountryName, NULLstring) ){
+        Country * CTemp=Clist->Next;
+        while (CTemp!=NULL)
+        {
+            strcpy(CountryName, CTemp->CName);
+            MonitorCheck * Temp = MonitorList;
+            int accepted=0, rejected=0;
+            while (Temp != NULL){
+                if ( !strcmp(Temp->VirusName, VirusName) && !strcmp(Temp->CountryName, CountryName) && CheckDate(Temp->RequestDate, Timing1) && CheckDate(Timing2, Temp->RequestDate) ){
+                    accepted+=(int)Temp->Accepted; rejected+=(int)Temp->Rejected;
+                }
+                Temp=Temp->Next;
+            }
+            printf("Country:%s\nTOTAL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", CountryName, accepted+rejected, accepted, rejected);
+            CTemp=CTemp->Next;
+
+        }
+        return;
+    }
+    MonitorCheck * Temp = MonitorList;
+    int accepted=0, rejected=0;
+    while (Temp != NULL){
+        if ( !strcmp(Temp->VirusName, VirusName) && !strcmp(Temp->CountryName, CountryName) && CheckDate(Temp->RequestDate, Timing1) && CheckDate(Timing2, Temp->RequestDate) ){
+            accepted+=(int)Temp->Accepted; rejected+=(int)Temp->Rejected;
+        }
+        Temp=Temp->Next;
+    }
+    printf("TOTAL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", accepted+rejected, accepted, rejected);
+    return;
+}
+
+
+// void searchVaccinationStatus(Virus * Vlist, Country * Clist, char ** Array)
+// {
+//     char * Id, * FirstName, * LastName, * CountryName, *Age;
+//     Country * Temp=Clist;
+//     while (Temp != NULL){
+//         if (Temp->Id != -1){
+//             int size, fd;
+//             void * input=serialize_commands(Array, &size);
+//             Fifo_writeCommands(Temp->Id, input, &size, &fd); close(fd);
+//             input=Fifo_readCommands(Temp->Id, 100, &fd);
+//             char ** Answer=unserialize_commands(input);
+            
+//         }
+        
+//         Temp=Temp->Next;
+//     }
+//     char ** Answer=CopyArray(Array, Array);
+// }
+
+
+// void CheckArray(char ** Array, char * Id, char * FirstName, char * LastName, char * CountryName, char * Age)
+// {
+//     if( !strcmp(Array[0], "YES") ){
+//         if( strcmp(Id, NULLstring) ){
+//             for (int i = 5; ; i++){
+//                 if ( !strcmp(Array[i], NULLstring)){
+//                     break;    
+//                 }
+                
+//             }
+            
+//         }
+//         return;
+//     }
+//     return;
+// }
+
 
 void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName)
 {

@@ -1,8 +1,8 @@
 19 name19 surname19 Italy 8 VIRUS4 NO
 18 name18 surname18 Italy 108 VIRUS2 NO
 12 name12 surname12 Italy 40 VIRUS2 NO
-20 name20 surname20 Italy 60 VIRUS2 YES 3-12-2049
-16 name16 surname16 Italy 13 VIRUS3 YES 27-1-2028
+20 name20 surname20 Italy 60 VIRUS2 YES 3-12-2020
+16 name16 surname16 Italy 13 VIRUS3 YES 27-1-2021
 17 name17 surname17 Italy 10 VIRUS4 NO
 15 name15 surname15 Italy 105 VIRUS1 YES 9-8-2016
 14 name14 surname14 Italy 11 VIRUS1 NO

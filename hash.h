@@ -34,6 +34,22 @@ void PrintDate(Date * Timing);
 */
 bool CheckDate(Date * Timing1, Date * Timing2);
 
+/* Checks if a date is before or after an other.
+ * If Timing1 is before Timing2 it returns false. Otherwise, it returns true.
+ *
+ * Timing1 and Timing2: 2 nodes of type date.
+ *
+*/
+bool CheckDateEq(Date * Timing1, Date * Timing2);
+
+/* Checks if a date is before or after an other.
+ * If Timing1 is before Timing2 it returns false. Otherwise, it returns true.
+ *
+ * Timing1 and Timing2: 2 nodes of type date.
+ *
+*/
+bool CheckDateDiffer(Date * Timing1, Date * Timing2);
+
 /* Struct that implements a hash table.
  * This is the main struct of the program. It keeps all the informations that we have for a citizen.
  *

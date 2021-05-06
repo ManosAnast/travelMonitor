@@ -1,16 +1,18 @@
-# include "TMCommands.h"
+# include "serialize.h"
 
 typedef struct TMInterface{
     char * VirusName;
+    char * CountryName;
     int Accepted;
     int Rejected;
+    Date * RequestDate;
     struct TMInterface * Next;
 }MonitorCheck;
 
-void MCInit(MonitorCheck * MonitorList);
+MonitorCheck * MCInit();
 
-void MCInsert(MonitorCheck * MonitorList, char * VName, bool Accepted, bool Rejected);
+void MCInsert(MonitorCheck * MonitorList, char * VName, char * CountryName, bool Accepted, bool Rejected, Date * RequestDate);
 
-void MCPrint(MonitorCheck * MonitorList, char * VName);
+void MCPrint(MonitorCheck * MonitorList, char * VName, char * CountryName);
 
 void MCDestroy(MonitorCheck * MonitorList);

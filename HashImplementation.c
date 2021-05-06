@@ -49,11 +49,43 @@ void PrintDate(Date * Timing)
 
 bool CheckDate(Date * Timing1, Date * Timing2)
 {
+    if (Timing1->Year > Timing2->Year){
+        return true;                
+    }
+    else if (Timing1->Year == Timing2->Year){
+        if (Timing1->Month > Timing2->Month){
+            return true;
+        }
+        else if (Timing1->Month == Timing2->Month){
+            if (Timing1->Days >= Timing2->Days){
+                return true;
+            }            
+        }
+    }
+    
+    return false;
+}
+
+bool CheckDateEq(Date * Timing1, Date * Timing2)
+{
+    if (Timing1->Year == Timing2->Year){
+        if (Timing1->Month == Timing2->Month){
+            if (Timing1->Days == Timing2->Days){
+                return true;
+            }            
+        }
+    }
+    return false;
+}
+
+
+bool CheckDateDiffer(Date * Timing1, Date * Timing2)
+{
     if (Timing1->Year < Timing2->Year){
-        if (Timing1->Month > Timing2->Month - 6){
+        if ( (12 - Timing1->Month + Timing2->Month - 1) > 6){
             return false;
         }
-        else if (Timing1->Month -6 == Timing2->Month){
+        else if ( (12 - Timing1->Month  + Timing2->Month - 1)  == 6){
             if (Timing1->Days >= Timing2->Days){
                 return true;
             }
@@ -63,20 +95,21 @@ bool CheckDate(Date * Timing1, Date * Timing2)
     }
     
     if (Timing1->Year == Timing2->Year){
-        if (Timing1->Month > Timing2->Month - 6){
+        if ( (Timing1->Month - Timing2->Month) > 6){
             return false;
         }
-        else if (Timing1->Month == Timing2->Month - 6){
+        else if ( (Timing1->Month - Timing2->Month) == 6){
             if (Timing1->Days >= Timing2->Days){
                 return true;
             }
-            return false;   
+            return false;
         }
-        return true;
+        return true; 
     }
     
     return false;
 }
+
 
 void HTCreate(int Size)
 {

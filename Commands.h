@@ -1,4 +1,4 @@
-# include "serialize.h"
+# include "TMInterface.h"
 
 /* Implemention of the vaccinateStatusBloom command.
  * vaccinationStatusBloom: Takes an id and a virus. Checks at the virus bloomfilter if the id has been inserted and prints the suitable message.
@@ -10,7 +10,13 @@
 */
 void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName);
 
-void travelRequest(Virus * Vlist, char ** Array, Country * Clist);
+void travelRequest(MonitorCheck * MonitorList , Virus * Vlist, char ** Array, Country * Clist);
+
+void travelStat(MonitorCheck * MonitorList, Country * Clist, char * VirusName, char * Date1, char * Date2, char * Country);
+
+void searchVaccinationStatus(Virus * Vlist, Country * Clist, char ** Array);
+
+void CheckArray(char ** Array, char * Id, char * FirstName, char * LastName, char * CountryName, char * Age);
 
 /* Implemention of the vaccinateStatus command.
  * vaccinationStatus: Takes an id and a virus. Checks at the virus bloomfilter if the id has been inserted and prints the suitable message.

@@ -175,21 +175,25 @@ void Destroy(Virus * Vlist, Country * CList)
     HTDestroy();
 }
 
-void MCInit(MonitorCheck * MonitorList)
+MonitorCheck *  MCInit()
 {
-    MonitorList=(MonitorCheck *)calloc(1, sizeof(MonitorCheck));
+    MonitorCheck * MonitorList=(MonitorCheck *)calloc(1, sizeof(MonitorCheck));
     MonitorList->VirusName=(char *)calloc(strlen(NULLstring), sizeof(char));
     strcpy(MonitorList->VirusName, NULLstring);
+    MonitorList->CountryName=(char *)calloc(strlen(NULLstring), sizeof(char));
+    strcpy(MonitorList->CountryName, NULLstring);
     MonitorList->Accepted=0; MonitorList->Rejected=0;
+    MonitorList->RequestDate=(Date *)calloc(1, sizeof(Date));
+    MonitorList->RequestDate=NULL;
     MonitorList->Next=NULL;
-    return;
+    return MonitorList;
 }
 
-void MCInsert(MonitorCheck * MonitorList, char * VName, bool Accepted, bool Rejected)
+void MCInsert(MonitorCheck * MonitorList, char * VName, char * CName, bool Accepted, bool Rejected, Date * RequestDate)
 {
     MonitorCheck * Temp=MonitorList;
     while (Temp->Next!=NULL){
-        if ( !strcmp(Temp->VirusName, VName) ){
+        if ( !strcmp(Temp->VirusName, VName) && !strcmp(Temp->CountryName, CName) && CheckDateEq(RequestDate, Temp->RequestDate)){
             Temp->Accepted+=(int)Accepted; Temp->Rejected+=(int)Rejected;
             return;
         }
@@ -198,13 +202,16 @@ void MCInsert(MonitorCheck * MonitorList, char * VName, bool Accepted, bool Reje
     MonitorCheck * NewNode=(MonitorCheck *)calloc(1, sizeof(MonitorCheck));
     NewNode->VirusName=(char *)calloc(strlen(VName), sizeof(char));
     strcpy(NewNode->VirusName, VName);
+    NewNode->CountryName=(char *)calloc(strlen(CName), sizeof(char));
+    strcpy(NewNode->CountryName, CName);
     NewNode->Accepted=(int)Accepted; NewNode->Rejected=(int)Rejected;
+    NewNode->RequestDate=RequestDate;
     NewNode->Next=NULL;
     MonitorList->Next=NewNode;
     return;
 }
 
-void MCPrint(MonitorCheck * MonitorList, char * VName)
+void MCPrint(MonitorCheck * MonitorList, char * VName, char * CName)
 {
     MonitorCheck * Temp=MonitorList;
     while (Temp->Next!=NULL){
@@ -223,7 +230,7 @@ void MCDestroy(MonitorCheck * MonitorList)
     MonitorCheck * Current=MonitorList, *Next;
     while (Current!= NULL){
         Next=Current->Next;
-        free(Current->VirusName); free(Current);
+        free(Current->CountryName); free(Current->VirusName); free(Current);
         Current=Next;
     }
     return;

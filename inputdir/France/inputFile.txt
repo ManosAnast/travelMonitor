@@ -1,4 +1,4 @@
-21 name21 surname21 France 104 VIRUS4 YES 9-1-2042
+21 name21 surname21 France 104 VIRUS4 YES 9-1-2021
 22 name22 surname22 France 45 VIRUS4 YES 22-1-2017
 29 name29 surname29 France 119 VIRUS4 NO
 27 name27 surname27 France 118 VIRUS1 NO
@@ -6,5 +6,5 @@
 30 name30 surname30 France 48 VIRUS2 NO
 25 name25 surname25 France 95 VIRUS4 YES 28-10-2011
 24 name24 surname24 France 59 VIRUS1 NO
-28 name28 surname28 France 2 VIRUS2 YES 1-1-2033
+28 name28 surname28 France 2 VIRUS2 YES 1-1-2019
 23 name23 surname23 France 103 VIRUS4 NO

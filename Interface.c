@@ -36,15 +36,15 @@ void TTY(Virus * Vlist, Country * Clist)
             travelRequest(MonitorList, Vlist, Array, Clist);
             nothing();
         }
-        else if ( !strcmp(Array[0], "travelStat") ){
+        else if ( !strcmp(Array[0], "travelStats") ){
             travelStat(MonitorList, Clist, Array[1], Array[2], Array[3], Array[4]);
         }
-        // else if ( !strcmp(Array[0], "searchVaccinationStatus") ){
-        //     if(!strcmp(Array[1], NULLstring)){
-        //         printf("Wrong command. vaccineStatus is called like:\nsearchVaccinationStatus citizenID\n\n"); continue;
-        //     }
-        //     searchVaccinationStatus(Vlist, Clist, Array);
-        // }
+        else if ( !strcmp(Array[0], "searchVaccinationStatus") ){
+            if(!strcmp(Array[1], NULLstring)){
+                printf("Wrong command. vaccineStatus is called like:\nsearchVaccinationStatus citizenID\n\n"); continue;
+            }
+            searchVaccinationStatus(Vlist, Clist, Array);
+        }
         
         
         printf("\n");
@@ -125,6 +125,12 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
                 free(Array[i]);
             }
             free(Array);
+        }
+        else if ( !strcmp(Array[0], "searchVaccinationStatus") ){
+            if(!strcmp(Array[1], NULLstring)){
+                printf("Wrong command. vaccineStatus is called like:\nsearchVaccinationStatus citizenID\n\n"); continue;
+            }
+            searchVaccinationStatusMonitor(id, Array[1]);
         }
         
     }

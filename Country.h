@@ -39,6 +39,8 @@ char * FixName(char * CName);
 
 int CountryId(Country * CList, char * CName);
 
+char * CountryFind(Country * CList, int monitorId);
+
 /* Delete all the country lists nodes.
  * 
 */

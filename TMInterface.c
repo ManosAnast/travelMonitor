@@ -207,7 +207,7 @@ void MCInsert(MonitorCheck * MonitorList, char * VName, char * CName, bool Accep
     NewNode->Accepted=(int)Accepted; NewNode->Rejected=(int)Rejected;
     NewNode->RequestDate=RequestDate;
     NewNode->Next=NULL;
-    MonitorList->Next=NewNode;
+    Temp->Next=NewNode;
     return;
 }
 

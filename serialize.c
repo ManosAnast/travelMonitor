@@ -152,17 +152,6 @@ void * serialize_commands(char ** Array, int * Length)
     return output;
 }
 
-void * serialize_commandsint(char ** Array, int * Length)
-{
-    void * output=malloc(100*sizeof(void));
-    *Length=0;
-    for (int i = 0; i < 3; i++){
-        memcpy(output+*Length, Array[i], sizeof(int));
-        *Length+=sizeof(int);
-    }
-    return output;
-}
-
 char ** unserialize_commands(void * input)
 {
     int Length=0;
@@ -180,4 +169,20 @@ char ** unserialize_commands(void * input)
         }
     }
     return Array;
+}
+
+void * serialize_citizen(Citizens * Rec, int * Length, int buffer)
+{
+    void * output=malloc(buffer*sizeof(void));
+    *Length=0;
+    
+    memcpy(output+*Length, &(Rec->citizenId), sizeof(int));
+
+    *Length+=sizeof(int);
+    // memcpy
+}
+
+Citizens * unserialize_citizen(void * input)
+{
+
 }

@@ -153,7 +153,8 @@ void VirusDestroy(Virus ** VList)
 
 Country * CountryCreate()
 {
-    Country * CList=(Country *)calloc(1, sizeof(Country)); CList->Next=NULL; 
+    Country * CList=(Country *)calloc(1, sizeof(Country)); CList->Next=NULL;
+    CList->Id=-1; 
     CList->CName=(char *)calloc(20, sizeof(char)); strcpy(CList->CName, NULLstring);
     return CList;
 }
@@ -205,6 +206,18 @@ int CountryId(Country * CList, char * CName)
         Temp=Temp->Next;
     }
     return -1;
+}
+
+char * CountryFind(Country * CList, int monitorId)
+{
+    Country * Temp=CList;
+    while (Temp != NULL){
+        if(Temp->Id == monitorId){
+            return Temp->CName;
+        }
+        Temp=Temp->Next;
+    }
+    return NULLstring;
 }
 
 void CountryDestroy(Country ** CList)

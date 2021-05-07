@@ -184,6 +184,21 @@ Citizens * HTSearch(int Item, char * Virus)
     return NULL;
 }
 
+Citizens * HTSearchID(int Item)
+{
+    Citizens * Temp = Table[Hash(Item)];
+    if(Temp == NULL){
+        return NULL;
+    }
+    while (Temp != NULL ){
+        if (Temp->citizenId == Item){ // A citizen can have been inserted multiple times. Therefore, I check and the virus.
+            return Temp;
+        }
+        Temp=Temp->Next;
+    }
+    return NULL;
+}
+
 void HTPrint()
 {
     for (int i = 0; i < M; i++){

@@ -14,6 +14,8 @@ int BytestoRead(int size, int times, int buffer);
 
 void * serialize_commands(char ** Array, int * Length);
 
-void * serialize_commandsint(char ** Array, int * Length);
-
 char ** unserialize_commands(void * input);
+
+void * serialize_citizen(Citizens * Rec, int * Length, int buffer);
+
+Citizens * unserialize_citizen(void * input);

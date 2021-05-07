@@ -121,6 +121,16 @@ void HTPrint();
 */
 Citizens * HTSearch(int Item, char * Virus);
 
+/* Takes a Id(Item) and a Virus name and searches for the citizen that has this Id and is inserted with this virus.
+ * If the citizen exists, returns the node.
+ * If the citizen doesn't exist, returns null.
+ *
+ * Item: Citizen Id.
+ * Virus: Virus that the citizen that we want, has been inserted with.
+ *
+*/
+Citizens * HTSearchID(int Item);
+
 /* Destroy all the hash table.
 */
 void HTDestroy();

@@ -89,54 +89,16 @@ void searchVaccinationStatus(Virus * Vlist, Country * Clist, char ** Array)
     while (Temp != NULL){
         if (Temp->Id != -1){
             int size, fd;
-            printf("travel monitor %d %s\n", Temp->Id, Temp->CName);
             void * input=serialize_commands(Array, &size);
             Fifo_writeCommands(Temp->Id, input, size, &fd); close(fd);
-
-            char fifo_name[100];
-            if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", Temp->Id)<0){
-                return;
-            }
-            void * Input=calloc(100, sizeof(void)); 
-            fd=open(fifo_name, O_RDONLY);
-            if(fd<0){
-                perror("open failed:");
-                return;
-            }
-            struct timeval  timeout;
-            fd_set fds;
-            int maxfd=fd;
-            int res=0, s;
-            char buf[256];
-
-            FD_ZERO(&fds); // Clear FD set for select
-            FD_SET(fd, &fds);
-            timeout.tv_sec = 60; /* One minute */
-            timeout.tv_usec = 0; /* and no millionths of seconds */
-
-            if((s=select(maxfd + 1, &fds, NULL, NULL, &timeout)) < 0){
-                perror("Select"); exit(EXIT_FAILURE);
-            }
-            else if (!s){
-                continue;
-            }
-            
-            if (FD_ISSET(fd, &fds)){
-                res=read(fd, Input, 100);
-                if(res<0){
-                    perror("read failed");
-                    close(fd);
-                    return;
-                }
-            }
-            // input=Fifo_readCommands(Temp->Id, 100, &fd);
-            char ** Answer=unserialize_commands(input);
-            if ( strcmp(Answer[0], "NO")){
-                printf("%s %s %s %s\n AGE %s\n %s %s\n", Array[0], Array[1], Array[2], Temp->CName, Array[3], Array[4], Array[5]);
+            void * Input=Fifo_readCommands(Temp->Id, 100, &fd);
+            char ** Answer=unserialize_commands(Input);
+            if ( !strcmp(Answer[0], Array[1])){
+                printf("%s %s %s %s\nAGE %s\n%s %s\n", Answer[0], Answer[1], Answer[2], Temp->CName, Answer[3], Answer[4], Answer[5]);
                 free(Answer[0]); free(Answer[1]); free(Answer[2]); free(Answer[3]); free(Answer[4]); free(Answer[5]); free(Answer);
                 break;
             }
-            free(Answer[0]); free(Answer[1]); free(Answer);
+            free(Answer[0]); free(Answer[1]); free(Answer[2]); free(Answer[3]); free(Answer[4]); free(Answer[5]); free(Answer);
         }
         
         Temp=Temp->Next;

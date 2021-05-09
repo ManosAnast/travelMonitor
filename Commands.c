@@ -106,25 +106,6 @@ void searchVaccinationStatus(Virus * Vlist, Country * Clist, char ** Array)
     return;
 }
 
-
-// void CheckArray(char ** Array, char * Id, char * FirstName, char * LastName, char * CountryName, char * Age)
-// {
-//     if( !strcmp(Array[0], "YES") ){
-//         if( strcmp(Id, NULLstring) ){
-//             for (int i = 5; ; i++){
-//                 if ( !strcmp(Array[i], NULLstring)){
-//                     break;    
-//                 }
-                
-//             }
-            
-//         }
-//         return;
-//     }
-//     return;
-// }
-
-
 void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName)
 {
     Virus * Temp = VirusFind(Vlist, VirusName);

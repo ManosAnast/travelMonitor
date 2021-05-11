@@ -1,4 +1,4 @@
-# include "TMInterface.h"
+# include "signal.h"
 
 /* Implemention of the vaccinateStatusBloom command.
  * vaccinationStatusBloom: Takes an id and a virus. Checks at the virus bloomfilter if the id has been inserted and prints the suitable message.

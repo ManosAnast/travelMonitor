@@ -84,17 +84,18 @@ void travelStat(MonitorCheck * MonitorList, Country * Clist, char * VirusName, c
 
 void searchVaccinationStatus(Virus * Vlist, Country * Clist, char ** Array)
 {
-    char * Id, * FirstName, * LastName, * CountryName, *Age;
+    int size, fd;
     Country * Temp=Clist;
     while (Temp != NULL){
         if (Temp->Id != -1){
-            int size, fd;
             void * input=serialize_commands(Array, &size);
             Fifo_writeCommands(Temp->Id, input, size, &fd); close(fd);
-            void * Input=Fifo_readCommands(Temp->Id, 100, &fd);
+            void * Input=Fifo_readCommands(Temp->Id, 100, &fd); close(fd);
             char ** Answer=unserialize_commands(Input);
             if ( !strcmp(Answer[0], Array[1])){
                 printf("%s %s %s %s\nAGE %s\n%s %s\n", Answer[0], Answer[1], Answer[2], Temp->CName, Answer[3], Answer[4], Answer[5]);
+                Input=Fifo_readCommands(Temp->Id, 100, &fd); close(fd);
+                Answer=unserialize_commands(Input);
                 free(Answer[0]); free(Answer[1]); free(Answer[2]); free(Answer[3]); free(Answer[4]); free(Answer[5]); free(Answer);
                 break;
             }

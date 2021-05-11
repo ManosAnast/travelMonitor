@@ -1,6 +1,8 @@
 # include "Interface.h"
 
 int Level, BloomNum;
+volatile sig_atomic_t interrupt_flag_usr ;
+
 
 int main(int argc, char * argv[])
 {
@@ -32,6 +34,8 @@ int main(int argc, char * argv[])
     char * filternum=(char *)malloc(sizeof(char));
     sprintf(filternum, "%d", BloomNum);
     
+    Country * Clist=CountryCreate();
+    int child;
     for(int i=0;i<numMonitors;i++) // loop will run n times (n=5)
     {
         Fifo_init(i);
@@ -43,10 +47,10 @@ int main(int argc, char * argv[])
             perror("exec failed");
             exit(0);
         }
+        CountryInsert(&Clist, input, i, pid);
     }
 
     // Traverse the input directory and assign the countries to the monitors
-    Country * Clist=CountryCreate();
     DIR * dir=opendir(input);
     struct dirent * ent;
     int i=0;
@@ -59,7 +63,7 @@ int main(int argc, char * argv[])
                 return -1;
             }
             if( (path_stat.st_mode & S_IFMT) == S_IFDIR){ //Directory
-                CountryInsert(&Clist, input, i);
+                CountryInsert(&Clist, input, i, 0);
                 printf("%s\n", input);
                 Fifo_write(i, input, (strlen(input)+1)*sizeof(char)); 
                 // break;
@@ -79,6 +83,7 @@ int main(int argc, char * argv[])
     printf("%d\n", CountryId(Clist, "Greece"));
     TTY(Vlist, Clist);
 
+    nothing();
     // Unlink all the pipes and wait for the processes.
     for(int i=0;i<numMonitors;i++){ // loop will run n times (n=5)
         char fifo_name[100];
@@ -93,7 +98,6 @@ int main(int argc, char * argv[])
     }
     wait(NULL);
     
-    // Start(File);
 
     Destroy(Vlist, Clist);
     free(input);

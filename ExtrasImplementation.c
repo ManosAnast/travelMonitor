@@ -154,7 +154,7 @@ void VirusDestroy(Virus ** VList)
 Country * CountryCreate()
 {
     Country * CList=(Country *)calloc(1, sizeof(Country)); CList->Next=NULL;
-    CList->Id=-1; 
+    CList->Id=-1; CList->pid=-1;
     CList->CName=(char *)calloc(20, sizeof(char)); strcpy(CList->CName, NULLstring);
     return CList;
 }
@@ -167,15 +167,19 @@ Country * CountrySearch(Country * CList, char * Name)
     return CList;
 }
 
-void CountryInsert(Country ** CList, char * CName, int Id)
+void CountryInsert(Country ** CList, char * CName, int Id, int pid)
 {
     Country * Temp=*CList;
-    while (Temp->Next != NULL){ 
+    while (Temp->Next != NULL){
+        if (Temp->Id == Id){
+            Temp->CName=(char *)calloc(strlen(CName)+1, sizeof(char)); strcpy(Temp->CName, FixName(CName));
+            return;
+        }
         Temp=Temp->Next;
     }
     Country * NewNode=(Country *)calloc(1, sizeof(Country));
-    NewNode->CName=(char *)calloc(strlen(CName)+1, sizeof(char)); NewNode->Id=Id;
-    strcpy(NewNode->CName, FixName(CName)); NewNode->Next=NULL;
+    NewNode->CName=(char *)calloc(strlen(CName)+1, sizeof(char)); strcpy(NewNode->CName, FixName(CName));
+    NewNode->Id=Id; NewNode->pid=pid; NewNode->Next=NULL;
     Temp->Next=NewNode;
     return;
 }
@@ -189,6 +193,10 @@ char * FixName(char * CName)
         }
         size+=1;
     }
+    if (CName[i] != '/'){
+        return CName;
+    }
+    
     char * Country=(char *)calloc(size+1, sizeof(char));
     for (int j = 0; j < size; j++){
         Country[j]=CName[++i];

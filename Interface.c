@@ -39,13 +39,24 @@ void TTY(Virus * Vlist, Country * Clist)
         else if ( !strcmp(Array[0], "travelStats") ){
             travelStat(MonitorList, Clist, Array[1], Array[2], Array[3], Array[4]);
         }
+        else if ( !strcmp(Array[0], "addVaccinationRecords") ){
+            if(!strcmp(Array[1], NULLstring)){
+                printf("Wrong command. vaccineStatus is called like:\naddVaccinationRecords country\n\n"); continue;
+            }
+            Country * Temp=CountrySearch(Clist, Array[1]);
+            int size, fd;
+            // void * input=serialize_commands(Array, &size);
+            // Fifo_writeCommands(Temp->Id, input, size, &fd); close(fd);
+            kill(Temp->pid, SIGUSR1);
+            // void * Input=Fifo_readCommands(Temp->Id, 100, &fd); close(fd);
+            // char ** Answer=unserialize_commands(Input);
+        }
         else if ( !strcmp(Array[0], "searchVaccinationStatus") ){
             if(!strcmp(Array[1], NULLstring)){
                 printf("Wrong command. vaccineStatus is called like:\nsearchVaccinationStatus citizenID\n\n"); continue;
             }
             searchVaccinationStatus(Vlist, Clist, Array);
         }
-        
         
         printf("\n");
     }
@@ -65,6 +76,8 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
         return;
     }
     mkfifo(fifo_name, 0666);
+    
+    void (*oldhandler)(int) = signal(SIGUSR1, signal_usr);
     
     MonitorCheck * MonitorList;
     MCInit(MonitorList);
@@ -92,7 +105,6 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
         else if (!s){
             continue;
         }
-        
         if (FD_ISSET(fd, &fds)){
             res=read(fd, Input, buffer);
             if(res<0){
@@ -109,6 +121,10 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
             continue;
         }
         close(fd);
+
+        if(interrupt_flag_usr){
+            interrupt_flag_usr=0;// continue;
+        }
 
         char ** Array=unserialize_commands(Input);
 
@@ -134,6 +150,7 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
         }
         
     }
+    signal(SIGUSR1, oldhandler);
     
 
 }

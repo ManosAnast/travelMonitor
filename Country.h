@@ -10,6 +10,7 @@
 typedef struct Country{
     char * CName;
     int Id;
+    int pid;
     struct Country * Next;
 }Country;
 
@@ -33,7 +34,7 @@ Country * CountrySearch(Country * CList, char * Name);
  * Name: Name of the country that we want to insert.
  * 
 */
-void CountryInsert(Country ** CList, char * CName, int Id);
+void CountryInsert(Country ** CList, char * CName, int Id, int pid);
 
 char * FixName(char * CName);
 

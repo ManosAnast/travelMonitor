@@ -94,8 +94,8 @@ void searchVaccinationStatus(Virus * Vlist, Country * Clist, char ** Array)
             char ** Answer=unserialize_commands(Input);
             if ( !strcmp(Answer[0], Array[1])){
                 printf("%s %s %s %s\nAGE %s\n%s %s\n", Answer[0], Answer[1], Answer[2], Temp->CName, Answer[3], Answer[4], Answer[5]);
-                Input=Fifo_readCommands(Temp->Id, 100, &fd); close(fd);
-                Answer=unserialize_commands(Input);
+                // Input=Fifo_readCommands(Temp->Id, 100, &fd); close(fd);
+                // Answer=unserialize_commands(Input);
                 free(Answer[0]); free(Answer[1]); free(Answer[2]); free(Answer[3]); free(Answer[4]); free(Answer[5]); free(Answer);
                 break;
             }

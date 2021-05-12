@@ -44,12 +44,7 @@ void TTY(Virus * Vlist, Country * Clist)
                 printf("Wrong command. vaccineStatus is called like:\naddVaccinationRecords country\n\n"); continue;
             }
             Country * Temp=CountrySearch(Clist, Array[1]);
-            int size, fd;
-            // void * input=serialize_commands(Array, &size);
-            // Fifo_writeCommands(Temp->Id, input, size, &fd); close(fd);
-            kill(Temp->pid, SIGUSR1);
-            // void * Input=Fifo_readCommands(Temp->Id, 100, &fd); close(fd);
-            // char ** Answer=unserialize_commands(Input);
+            SendSignal(Temp, SIGUSR1);
         }
         else if ( !strcmp(Array[0], "searchVaccinationStatus") ){
             if(!strcmp(Array[1], NULLstring)){
@@ -68,7 +63,7 @@ void TTY(Virus * Vlist, Country * Clist)
 }
 
 
-void TTYMonitor(Virus * Vlist, int id, int buffer)
+void TTYMonitor(Virus * Vlist, int id, int buffer, char * text)
 {
     int fd;
     char fifo_name[100];
@@ -123,6 +118,7 @@ void TTYMonitor(Virus * Vlist, int id, int buffer)
         close(fd);
 
         if(interrupt_flag_usr){
+            addVaccinationRecords(Vlist, text);
             interrupt_flag_usr=0;// continue;
         }
 

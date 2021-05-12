@@ -1,6 +1,6 @@
 # include "Country.h"
 
-int serialize_bloom(bloom filter, char ** VirusName, int count, void ** output);
+int serialize_bloom(bloom filter, char * VirusName, int count, void ** output);
 
 bloom unserialize_bloom(void * input, char ** VirusName, int * count, int buffer, int *size);
 

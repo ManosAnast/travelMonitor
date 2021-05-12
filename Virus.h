@@ -60,3 +60,5 @@ void VirusDestroy(Virus ** VList);
  * 
 */
 Virus * VirusFind(Virus * Vlist, char * VirusName);
+
+void VirusPrint(Virus * Vlist);

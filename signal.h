@@ -2,6 +2,8 @@
 
 extern volatile sig_atomic_t interrupt_flag_usr ;
 
+void SendSignal(Country * CTemp, int signo);
+
 void signal_usr(int signo);
 
 void signal_int(int signo);

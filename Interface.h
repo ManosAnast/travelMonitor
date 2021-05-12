@@ -33,4 +33,4 @@ void TTY(Virus * Vlist, Country * Clist);
 */
 void Destroy(Virus * Vlist, Country * CList);
 
-void TTYMonitor(Virus * Vlist, int id, int buffer);
+void TTYMonitor(Virus * Vlist, int id, int buffer, char * text);

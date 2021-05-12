@@ -1,9 +1,9 @@
 # include "Interface.h"
 
-int serialize_bloom(bloom filter, char ** VirusName, int count, void ** output)
+int serialize_bloom(bloom filter, char * VirusName, int count, void ** output)
 {
     int Bytes=filter.NumofBytes;
-    int size=Bytes+3*sizeof(int)+strlen(*VirusName);
+    int size=Bytes+3*sizeof(int)+strlen(VirusName);
     int Length=0;
 
     //Keeps the number of bytes that the fifo is going to send.
@@ -16,10 +16,10 @@ int serialize_bloom(bloom filter, char ** VirusName, int count, void ** output)
     memcpy(*output+Length, &Bytes, sizeof(int));
 
     Length+=sizeof(int);
-    memcpy(*output+Length, *VirusName, strlen(*VirusName));
+    memcpy(*output+Length, VirusName, strlen(VirusName));
 
     char * Arr=filter.bits;
-    Length+=strlen(*VirusName);
+    Length+=strlen(VirusName);
     memcpy(*output+Length, filter.bits, Bytes);
 
     return size;
@@ -105,21 +105,25 @@ int receive_bloom(int id, Virus * Vlist, int buffer, void * input, int fd, int *
     return 0;
 }
 
-int send_bloom(int monitorId, int buffer, Virus * Vlist)
+int send_bloom(int monitorId, int buffer, Virus * VTemp)
 {
     int size=0;
-    Virus * VTemp=Vlist->Next;
-    int count=VirusCount(Vlist);
+    // printf("1 virus[%p]\n", Vlist);
+    // Virus * VTemp=Vlist;
+    // printf("2 virus[%p]\n", Vlist);
+    int count=VirusCount(VTemp);
     void * output;
+    VTemp=VTemp->Next;
     while (VTemp != NULL){
-        size = serialize_bloom(VTemp->filter, &(VTemp->VirusName), count, &output);
+        size = serialize_bloom(VTemp->filter, (VTemp->VirusName), count, &output);
         int flag=Fifo_write(monitorId, output, size);
         if (flag < 0){
             return -1;
         }
-        
         VTemp=VTemp->Next;
     }
+    // printf("3 virus[%p]\n", Vlist);
+    free(VTemp);
     return 0;
 }
 

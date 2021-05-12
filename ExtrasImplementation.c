@@ -150,6 +150,16 @@ void VirusDestroy(Virus ** VList)
     return;
 }
 
+void VirusPrint(Virus * Vlist)
+{
+    Virus * Temp=Vlist;
+    while (Temp != NULL)
+    {
+        printf("%s, %d, %d\n", Temp->VirusName, Temp->vaccinated_persons==NULL, Temp->not_vaccinated_persons==NULL);
+        Temp=Temp->Next;
+    }
+    return;
+}
 
 Country * CountryCreate()
 {

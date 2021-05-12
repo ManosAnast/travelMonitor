@@ -74,9 +74,9 @@ void Start(char * text, int monitorId, int buffer)
                 return;
             }
             else if( (path_stat.st_mode & S_IFMT) == S_IFREG){ //File
-            
                 fp=fopen(text , "r");   
                 // Find the number of entries that the given file has
+                
                 while(1) {
                     ch = getc(fp);
                     if( feof(fp) ) { 
@@ -155,13 +155,18 @@ void Start(char * text, int monitorId, int buffer)
 
     VirusSkipList(&Vlist);
     
-    int flag=send_bloom(monitorId, buffer, Vlist);
+    printf("%d virus[%p]\n", monitorId,  Vlist);
+    Virus * VTemp=Vlist;
+    int flag=send_bloom(monitorId, buffer, VTemp);
+    free(VTemp);
+    printf("%d virus[%p]\n", monitorId, Vlist);
+    // VirusPrint(Vlist);
     if (flag<0){ // If something goes wrong with fifo_write, free all the allocated memory and return.
         Destroy(Vlist, CList);
         exit(1);
     }
     
-    TTYMonitor(Vlist, monitorId, buffer);
+    TTYMonitor(Vlist, monitorId, buffer, text);
 
 
     Destroy(Vlist, CList);

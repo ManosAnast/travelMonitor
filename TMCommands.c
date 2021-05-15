@@ -70,20 +70,17 @@ void searchVaccinationStatusMonitor(int monitorId, char * Id)
 
 void addVaccinationRecords(Virus * Vlist, char * text)
 {
+    printf("inside addVaccinationRecords\n");
     int ch,Size=0;
     FILE * fp;
 
     DIR * dir=opendir(text);
     struct dirent * ent;
     int i=0;
-    printf("1 entered addVaccinationRecords\n");
     while ((ent = readdir(dir)) != NULL){
-        printf("2 entered addVaccinationRecords\n");
         text=FrontTrack(text, ent->d_name);
-        printf("3 entered addVaccinationRecords %s\n", ent->d_name);
         if ( strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){
             struct stat path_stat;
-            printf("4 entered addVaccinationRecords\n");
             
             if( lstat(text, &path_stat) == -1){
                 perror("monitor Stat");
@@ -91,18 +88,6 @@ void addVaccinationRecords(Virus * Vlist, char * text)
             }
             else if( (path_stat.st_mode & S_IFMT) == S_IFREG){ //File
             
-                fp=fopen(text , "r");   
-                // Find the number of entries that the given file has
-                while(1) {
-                    ch = getc(fp);
-                    if( feof(fp) ) { 
-                        break ;
-                    }
-                    if(ch == '\n'){  //Finds how many students are added.
-                        Size+=1;
-                    }
-                }
-                fclose(fp);
                 fp=fopen(text , "r");   
 
                 // Create the hash table and a string that takes each line
@@ -114,10 +99,8 @@ void addVaccinationRecords(Virus * Vlist, char * text)
                     Array[i]=(char*)malloc(50*sizeof(char));
                 }
                 const char * s=" "; // Char that indicates the breaking point of the string
-                printf("5 entered addVaccinationRecords\n");
                 while (1){
                     int i=0;
-                    printf("6 entered addVaccinationRecords\n");
                     while ((ch = getc(fp)) != EOF) // Read each line of the entries
                     {
                         if(ch == '\n'){
@@ -132,39 +115,25 @@ void addVaccinationRecords(Virus * Vlist, char * text)
                         break ;
                     }
                     
-                    printf("7 entered addVaccinationRecords\n");
                     BreakString(&Array, str, s, 8);
                     /* If the citizen has been vaccinated, yes, insert true. Otherwise insert false*/
-                    printf("8 entered addVaccinationRecords\n");
                     if (!strcmp(Array[6],"NO")){
-                        printf("9 entered addVaccinationRecords %d, %s\n", atoi(Array[0]), Array[5]);
-                        if(HTSearch2(atoi(Array[0]), Array[5])!=NULL){ // Check for duplication
-                            printf("Citizen with %d has already been added for %s\n", atoi(Array[0]), Array[5]);
-                        }
-                        else{
+                        if(HTSearch(atoi(Array[0]), Array[5])==NULL){
                             int Flag=HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], false, Array[7]);
                             if (Flag){ // If the hash table insertion had an error, don't insert to the other structs.
-                                printf("10 entered addVaccinationRecords\n");
-                                VirusInsert(&Vlist, Array[0], Array[5], false , Array[7]);
-                                printf("10.5 entered addVaccinationRecords\n");
+                                VirusInsert(&(Vlist->Next), Array[0], Array[5], false , Array[7]);
                             }
                         }
                     }
                     else if (!strcmp(Array[6],"YES")){
-                        printf("11 entered addVaccinationRecords\n");
-                        if(HTSearch2(atoi(Array[0]), Array[5])!=NULL){ // Check for duplication
-                            printf("Citizen with %d has already been added for %s\n", atoi(Array[0]), Array[5]);
-                        }
-                        else{
-                            printf("12 entered addVaccinationRecords\n");
+                        if(HTSearch(atoi(Array[0]), Array[5])==NULL){
                             int Flag=HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], true, Array[7]);
                             if(Flag){  // If the hash table insertion had an error, don't insert to the other structs.
-                                VirusInsert(&Vlist, Array[0], Array[5], true, Array[7]);
+                                VirusInsert(&(Vlist->Next), Array[0], Array[5], true, Array[7]);
                             }
                         }
                     }  
                 }
-                printf("13 entered addVaccinationRecords\n");
                 fclose(fp);
                 Level=Log(Size);
                 for (int i = 0; i < 8; i++){
@@ -178,6 +147,8 @@ void addVaccinationRecords(Virus * Vlist, char * text)
         printf("14 entered addVaccinationRecords\n");
         text=BackTrack(text);
     }
+    Citizens * Rec=HTSearch(0, "VIRUS1");
+    printf("end: %d\n", Rec==NULL);
     int size, fd;
     char ** Array=(char **)calloc(1, sizeof(char *));
     Array[0]=(char *)calloc(strlen(NULLstring), sizeof(char)); strcpy(Array[0], NULLstring);

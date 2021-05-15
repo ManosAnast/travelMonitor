@@ -9,7 +9,7 @@
 */
 typedef struct node{
     int Id;
-    struct node ** Next;
+    struct node * Next;
 }LinkedList;
 
 /*Initialize a new LinkedList
@@ -48,6 +48,8 @@ void LLDelete(LinkedList * List, int Key);
  * 
 */
 void LLPrint(LinkedList * List, int Level);
+
+LinkedList * LLSearch(LinkedList * List, int Level);
 
 /* Takes a LinkedList and frees all of it's contents.
  * 

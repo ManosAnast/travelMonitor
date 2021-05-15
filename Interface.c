@@ -7,6 +7,12 @@ void TTY(Virus * Vlist, Country * Clist)
     for(int i=0 ; i< 9 ; i++){
         Array[i]=(char*)malloc(50*sizeof(char));
     }
+
+    void (*oldhandler)(int);
+    oldhandler = signal(SIGINT, signal_iq);
+    oldhandler = signal(SIGQUIT, signal_iq);
+    oldhandler = signal(SIGCHLD, signal_chld);
+
     MonitorCheck * MonitorList=MCInit();
     while (1){
         char Answer[100];
@@ -21,7 +27,7 @@ void TTY(Virus * Vlist, Country * Clist)
             Clist=Clist->Next;
             while(Clist != NULL){
                 void * input=serialize_commands(Array, &Length);
-                Fifo_writeCommands(Clist->Id, input, Length, &fd);
+                Fifo_writeCommands(Clist->Id, input, Length, &fd); close(fd); free(input);
                 Clist=Clist->Next;
             }  
             break;
@@ -52,9 +58,30 @@ void TTY(Virus * Vlist, Country * Clist)
             }
             searchVaccinationStatus(Vlist, Clist, Array);
         }
+
+        int status;
+        if(interrupt_flag_iq){
+            Country * CTemp=Clist->Next;
+            while (CTemp != NULL){
+                // SendSignal(CTemp, SIGKILL);
+                printf("%s\n", CTemp->CName);
+                kill(CTemp->pid, SIGTERM);
+                sleep(2);
+                waitpid(CTemp->pid, &status, WNOHANG);
+                kill(CTemp->pid, SIGKILL);
+                waitpid(CTemp->pid, &status, 0);
+                CTemp=CTemp->Next;
+            }
+            // interrupt_flag_iq=0;
+            printf("break\n");
+            // free(CTemp);
+            break;
+        }
         
         printf("\n");
     }
+
+    MCDestroy(MonitorList);
     for (int i = 0; i < 9; i++){
         free(Array[i]);
     }
@@ -72,10 +99,11 @@ void TTYMonitor(Virus * Vlist, int id, int buffer, char * text)
     }
     mkfifo(fifo_name, 0666);
     
-    void (*oldhandler)(int) = signal(SIGUSR1, signal_usr);
+    void (*oldhandler)(int);
+    oldhandler = signal(SIGUSR1, signal_usr);
+    oldhandler = signal(SIGINT, signal_iq);
+    oldhandler = signal(SIGQUIT, signal_iq);
     
-    MonitorCheck * MonitorList;
-    MCInit(MonitorList);
     while (1){
         void * Input=calloc(buffer, sizeof(void)); 
         fd=open(fifo_name, O_RDONLY);
@@ -94,10 +122,8 @@ void TTYMonitor(Virus * Vlist, int id, int buffer, char * text)
         timeout.tv_sec = 60; /* One minute */
         timeout.tv_usec = 0; /* and no millionths of seconds */
 
-        if((s=select(maxfd + 1, &fds, NULL, NULL, &timeout)) < 0){
-            perror("Select"); exit(EXIT_FAILURE);
-        }
-        else if (!s){
+        s=select(maxfd + 1, &fds, NULL, NULL, &timeout);
+        if (!s){
             continue;
         }
         if (FD_ISSET(fd, &fds)){
@@ -122,13 +148,18 @@ void TTYMonitor(Virus * Vlist, int id, int buffer, char * text)
             interrupt_flag_usr=0;// continue;
         }
 
+        if(interrupt_flag_kill){
+            interrupt_flag_kill=0;
+            break;
+        }
+
         char ** Array=unserialize_commands(Input);
 
         if(!strcmp(Array[0], "exit")){
-            for (int i = 0; i < 6; i++){
-                free(Array[i]);
-            }
-            free(Array);
+            // for (int i = 0; i < 2; i++){
+            //     free(Array[i]);
+            // }
+            // free(Array);
             break;
         }
         if (!strcmp(Array[0], "travelRequest")){
@@ -146,7 +177,5 @@ void TTYMonitor(Virus * Vlist, int id, int buffer, char * text)
         }
         
     }
-    signal(SIGUSR1, oldhandler);
-    
-
+    return;    
 }

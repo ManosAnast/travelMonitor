@@ -22,10 +22,12 @@ char * FrontTrack(char * src, char * Next)
 {
     int length=strlen(src);
     if( src[length-1] != '/'){ // If the path doesn't have / at the end, add it and the add the new directory/file.
+        // src=(char *)realloc(src, (length+strlen(Next)+2)*sizeof(char));
         strcat(src, "/");
         strcat(src, Next);
     }
     else{
+        // src=(char *)realloc(src, (length+strlen(Next)+1)*sizeof(char));
         strcat(src, Next);
     }
     return src;
@@ -56,10 +58,10 @@ void BreakString(char *** Array, char * str, const char * s, int Num)
 
 void Start(char * text, int monitorId, int buffer)
 {
-    int ch,Size=0;
+    int ch,Size=CountSize(text);
 
     Virus * Vlist=VirusInit();
-    Country * CList=CountryCreate();
+    HTCreate(Size);
     FILE * fp;
 
     DIR * dir=opendir(text);
@@ -74,23 +76,10 @@ void Start(char * text, int monitorId, int buffer)
                 return;
             }
             else if( (path_stat.st_mode & S_IFMT) == S_IFREG){ //File
-                fp=fopen(text , "r");   
-                // Find the number of entries that the given file has
                 
-                while(1) {
-                    ch = getc(fp);
-                    if( feof(fp) ) { 
-                        break ;
-                    }
-                    if(ch == '\n'){  //Finds how many students are added.
-                        Size+=1;
-                    }
-                }
-                fclose(fp);
                 fp=fopen(text , "r");   
 
                 // Create the hash table and a string that takes each line
-                HTCreate(Size);
                 char *str;
                 str=(char *)calloc(150,sizeof(char));
                 
@@ -153,23 +142,17 @@ void Start(char * text, int monitorId, int buffer)
         text=BackTrack(text);
     }
 
-    VirusSkipList(&Vlist);
-    
-    printf("%d virus[%p]\n", monitorId,  Vlist);
-    Virus * VTemp=Vlist;
-    int flag=send_bloom(monitorId, buffer, VTemp);
-    free(VTemp);
-    printf("%d virus[%p]\n", monitorId, Vlist);
-    // VirusPrint(Vlist);
+    printf("\n");
+    int flag=send_bloom(monitorId, buffer, Vlist);
     if (flag<0){ // If something goes wrong with fifo_write, free all the allocated memory and return.
-        Destroy(Vlist, CList);
+        printf("flag<0\n");
+        VirusDestroy(&Vlist);
         exit(1);
     }
     
     TTYMonitor(Vlist, monitorId, buffer, text);
 
-
-    Destroy(Vlist, CList);
+    VirusDestroy(&Vlist);
     return;
 }
 
@@ -183,12 +166,11 @@ void Destroy(Virus * Vlist, Country * CList)
 MonitorCheck *  MCInit()
 {
     MonitorCheck * MonitorList=(MonitorCheck *)calloc(1, sizeof(MonitorCheck));
-    MonitorList->VirusName=(char *)calloc(strlen(NULLstring), sizeof(char));
+    MonitorList->VirusName=(char *)calloc(strlen(NULLstring)+1, sizeof(char));
     strcpy(MonitorList->VirusName, NULLstring);
-    MonitorList->CountryName=(char *)calloc(strlen(NULLstring), sizeof(char));
+    MonitorList->CountryName=(char *)calloc(strlen(NULLstring)+1, sizeof(char));
     strcpy(MonitorList->CountryName, NULLstring);
     MonitorList->Accepted=0; MonitorList->Rejected=0;
-    MonitorList->RequestDate=(Date *)calloc(1, sizeof(Date));
     MonitorList->RequestDate=NULL;
     MonitorList->Next=NULL;
     return MonitorList;
@@ -235,8 +217,44 @@ void MCDestroy(MonitorCheck * MonitorList)
     MonitorCheck * Current=MonitorList, *Next;
     while (Current!= NULL){
         Next=Current->Next;
-        free(Current->CountryName); free(Current->VirusName); free(Current);
+        free(Current->CountryName); free(Current->VirusName); free(Current->RequestDate); free(Current);
         Current=Next;
     }
     return;
+}
+
+int CountSize(char * text)
+{
+    int ch,Size=0;
+    FILE * fp;
+    DIR * dir=opendir(text);
+    struct dirent * ent;
+    int i=0;
+    while ((ent = readdir(dir)) != NULL){
+        text=FrontTrack(text, ent->d_name);
+        if ( strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){
+            struct stat path_stat;
+            if( lstat(text, &path_stat) == -1){
+                perror("monitor Stat");
+                return -1;
+            }
+            else if( (path_stat.st_mode & S_IFMT) == S_IFREG){ //File
+                fp=fopen(text , "r");   
+                // Find the number of entries that the given file has
+                
+                while(1) {
+                    ch = getc(fp);
+                    if( feof(fp) ) { 
+                        break ;
+                    }
+                    if(ch == '\n'){  //Finds how many students are added.
+                        Size+=1;
+                    }
+                }
+                fclose(fp);
+            }
+        }
+        text=BackTrack(text);
+    }
+    return Size;
 }

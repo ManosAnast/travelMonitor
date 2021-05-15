@@ -9,13 +9,11 @@ void travelRequest(MonitorCheck * MonitorList, Virus * Vlist, char ** Array, Cou
             int exist=bloomBitExist(&(VTemp->filter), Id);
             if (exist){
                 /*Go to country monitor and search there.*/
-                int fd;
-                int monitorId=CountryId(Clist, CountryFrom);
-                int Length;
+                int fd, monitorId=CountryId(Clist, CountryFrom), Length;
                 void * input=serialize_commands(Array, &Length);
-                Fifo_writeCommands(monitorId, input, Length, &fd);
-                close(fd);
-                void * Input=Fifo_readCommands(monitorId, 100, &fd);
+                Fifo_writeCommands(monitorId, input, Length, &fd); close(fd);
+
+                void * Input=Fifo_readCommands(monitorId, 100, &fd); close(fd);
                 char ** Answer=unserialize_commands(Input);
                 Date * RequestDate=CreateDate(TravelDate);
                 if(!strcmp(Answer[0], "NO")){
@@ -37,7 +35,6 @@ void travelRequest(MonitorCheck * MonitorList, Virus * Vlist, char ** Array, Cou
                     printf("REQUEST REJECTED – YOU WILL NEED ANOTHER VACCINATION BEFORE TRAVEL DATE\n");
                     MCInsert(MonitorList, VirusName, CountryFrom, false, true, RequestDate);
                 }
-                close(fd);
                 return;
             }
         }
@@ -125,7 +122,7 @@ void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName)
 Date * VaccinateStatus(Virus * Vlist, char * Id, char * VirusName)
 {
     Virus * Temp = VirusFind(Vlist, VirusName);
-    LinkedList * exist = SLSearch(Temp->vaccinated_persons, atoi(Id));
+    LinkedList * exist = LLSearch(Temp->vaccinated_persons, atoi(Id));
     if (exist != NULL)
     {
         // printf("VACCINATED ON "); 

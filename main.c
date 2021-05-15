@@ -1,7 +1,7 @@
 # include "Interface.h"
 
 int Level, BloomNum;
-volatile sig_atomic_t interrupt_flag_usr ;
+volatile sig_atomic_t interrupt_flag_usr, interrupt_flag_iq, interrupt_flag_kill ;
 
 
 int main(int argc, char * argv[])
@@ -23,15 +23,15 @@ int main(int argc, char * argv[])
             BloomNum=atoi(argv[++i]);
         }
         else if ( !strcmp(argv[i],"-i") ){
-            input=(char *)calloc(strlen(argv[++i])+1, sizeof(char));
-            strcpy(input,argv[i]);
+            input=(char *)calloc(strlen(argv[++i])+10, sizeof(char));
+            strcpy(input, argv[i]);
         }
     }
 
     
-    char * buf=(char *)malloc(sizeof(char));
+    char * buf=(char *)malloc(4*sizeof(char));
     sprintf(buf, "%d", buffer);
-    char * filternum=(char *)malloc(sizeof(char));
+    char * filternum=(char *)malloc(7*sizeof(char));
     sprintf(filternum, "%d", BloomNum);
     
     Country * Clist=CountryCreate();
@@ -41,14 +41,17 @@ int main(int argc, char * argv[])
         Fifo_init(i);
         pid_t pid=fork();
         if(pid == 0){
-            char * id=(char *)malloc(sizeof(char));
+            char * id=(char *)malloc(2*sizeof(char));
             sprintf(id, "%d", i);
             execlp("./monitor", "monitor", id, buf, filternum, NULL);
             perror("exec failed");
             exit(0);
         }
-        CountryInsert(&Clist, input, i, pid);
+        else{
+            CountryInsert(&Clist, input, i, pid);
+        }
     }
+    free(buf); free(filternum);
 
     // Traverse the input directory and assign the countries to the monitors
     DIR * dir=opendir(input);
@@ -72,7 +75,8 @@ int main(int argc, char * argv[])
         }
         input=BackTrack(input);
     }
-    // printf("main1\n");
+    free(dir);
+    
     // Take bloomfilters
     Virus * Vlist = VirusInit();
     char * country;
@@ -80,7 +84,6 @@ int main(int argc, char * argv[])
         int flag = receivebloomtest(i, Vlist, buffer);
     }
 
-    printf("%d\n", CountryId(Clist, "Greece"));
     TTY(Vlist, Clist);
 
     nothing();
@@ -99,7 +102,8 @@ int main(int argc, char * argv[])
     wait(NULL);
     
 
-    Destroy(Vlist, Clist);
+    VirusDestroy(&Vlist);
+    CountryDestroy(&Clist);
     free(input);
 
     return 0;

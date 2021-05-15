@@ -48,7 +48,7 @@ bloom unserialize_bloom(void * input, char ** VirusName, int * count, int buffer
     
     filter.bits=(char *)calloc(filterbytes, sizeof(char));
     Length+=sizeof(int);
-    *VirusName=(char *)calloc(Namesize, sizeof(char));
+    *VirusName=(char *)calloc(Namesize+1, sizeof(char));
     memcpy(*VirusName, input+Length, Namesize);
 
     Length+=Namesize;
@@ -64,6 +64,7 @@ int receivebloomtest(int id, Virus * Vlist, int buffer)
     for (int i = 0; i < count; i++){
         void * input =Fifo_read(id, buffer, &fd);
         receive_bloom(id, Vlist, buffer, input, fd, &count);
+        free(input);
     }
 
 }
@@ -101,6 +102,7 @@ int receive_bloom(int id, Virus * Vlist, int buffer, void * input, int fd, int *
     free(filterbits);
     VirusInsertBloom(&Vlist, VirusName, bloomfilter);
     
+    free(VirusName);
     close(fd);
     return 0;
 }

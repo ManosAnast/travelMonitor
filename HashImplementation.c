@@ -184,25 +184,6 @@ Citizens * HTSearch(int Item, char * Virus)
     return NULL;
 }
 
-Citizens * HTSearch2(int Item, char * Virus)
-{
-    printf("HTSearch Item:%d, Virus:%s\n", Item, Virus);
-    Citizens * Temp = HTSearchID(Item);
-    if(Temp == NULL){
-        printf("HTSearch null1\n");
-        return NULL;
-    }
-    while (Temp != NULL ){
-        if (Temp->citizenId == Item && !strcmp(Temp->Virus, Virus)){ // A citizen can have been inserted multiple times. Therefore, I check and the virus.
-            printf("HTSearch: %d, %s\n", Temp->citizenId, Temp->Virus);
-            return Temp;
-        }
-        Temp=Temp->Next;
-    }
-    printf("HTSearch null2\n");
-    return NULL;
-}
-
 Citizens * HTSearchID(int Item)
 {
     Citizens * Temp = Table[Hash(Item)];

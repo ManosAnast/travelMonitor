@@ -16,3 +16,5 @@ void MCInsert(MonitorCheck * MonitorList, char * VName, char * CountryName, bool
 void MCPrint(MonitorCheck * MonitorList, char * VName, char * CountryName);
 
 void MCDestroy(MonitorCheck * MonitorList);
+
+int CountSize(char * text);

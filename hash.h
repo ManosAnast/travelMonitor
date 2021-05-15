@@ -107,6 +107,8 @@ Citizens * NewRecord(int Id, char * FirstName, char * LastName, char * Country, 
 */
 int HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr);
 
+int HTInsert2(int Id, char * FirstName, char * LastName, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr);
+
 /* Prints all the nodes of a Table.
 */
 void HTPrint();

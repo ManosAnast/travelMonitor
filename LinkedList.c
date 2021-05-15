@@ -3,7 +3,7 @@
 LinkedList * LLInit()
 {
     LinkedList * New=(LinkedList *)malloc(sizeof(LinkedList));
-    New->Id=0; New->Next=(LinkedList **)calloc(1, sizeof(LinkedList *));
+    New->Id=0; New->Next=NULL;
     return New;
 }
 
@@ -19,25 +19,37 @@ void LLInsertHelper(LinkedList ** List, int Key) // It is used only for the 0th 
 {
     LinkedList * Temp= *List, * Previous, * NewNode;
     Temp->Id -= 1;
-    while (Temp->Next[0] != NULL && Temp->Id < Key){
+    while (Temp->Next != NULL && Temp->Id < Key){
         Previous = Temp;
-        Temp=Temp->Next[0];
+        Temp=Temp->Next;
     }
     /*Make a new node*/
     NewNode=(LinkedList *)calloc(1, sizeof(LinkedList));
-    NewNode->Next=(LinkedList **)calloc(1, sizeof(LinkedList *));
+    NewNode->Next=(LinkedList *)calloc(1, sizeof(LinkedList));
     NewNode->Id=Key;
 
     /*Connect the new node to the correct position*/
-    if(Temp->Next[0] == NULL && Temp->Id < Key){ // The new node becomes the last node.
-        NewNode->Next[0]=NULL;
-        Temp->Next[0]=NewNode;
+    if(Temp->Next == NULL && Temp->Id < Key){ // The new node becomes the last node.
+        NewNode->Next=NULL;
+        Temp->Next=NewNode;
     }
     else if (Temp->Id > Key){        
-        Previous->Next[0]=NewNode;
-        NewNode->Next[0]=Temp;
+        Previous->Next=NewNode;
+        NewNode->Next=Temp;
     }
     return;
+}
+
+LinkedList * LLSearch(LinkedList * List, int Item)
+{
+    LinkedList * Temp=List;
+    while (Temp != NULL){
+        if (Temp->Id == Item){
+            return Temp;
+        }
+        Temp=Temp->Next;
+    }
+    return NULL;
 }
 
 void LLPrint(LinkedList * List, int Level)
@@ -45,7 +57,7 @@ void LLPrint(LinkedList * List, int Level)
     LinkedList * Temp=List;
     while (Temp != NULL){
         printf("%d",Temp->Id);
-        Temp=Temp->Next[Level];
+        Temp=Temp->Next;
         if (Temp != NULL){
             printf(" -> ");
         }
@@ -58,7 +70,7 @@ void LLDestroy(LinkedList ** List)
 {
     LinkedList * Current=*List, *Next;
     while (Current!= NULL){
-        Next=Current->Next[0];
+        Next=Current->Next;
         free(Current->Next);
         free(Current);
         Current=Next;

@@ -11,8 +11,8 @@
 */
 typedef struct Interface{
     char * VirusName;
-    SkipList * vaccinated_persons;
-    SkipList * not_vaccinated_persons;
+    LinkedList * vaccinated_persons;
+    LinkedList * not_vaccinated_persons;
     bloom filter;
     struct Interface * Next;
 }Virus;
@@ -33,6 +33,8 @@ Virus * VirusInit();
  * 
 */
 void VirusInsert(Virus ** VList, char * CitizenId, char * VName, bool Vaccinated, char * DateStr);
+
+void VirusInsert2(Virus ** VList, char * CitizenId, char * VName, bool Vaccinated, char * DateStr);
 
 void VirusInsertBloom(Virus ** VList, char * VName, bloom filter);
 

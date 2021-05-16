@@ -41,7 +41,7 @@ int Fifo_init(int Num);
  * 
  * return: 0 if everything goes fine. Otherwise, it returns -1.
 */
-int Fifo_write(int Num, void * Input, int size);
+int Fifo_write(int Num, void * Input, int size, int *fd);
 
 /* Read from fifo.
  *

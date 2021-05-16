@@ -19,21 +19,22 @@ int Fifo_init(int Num)
     return mkfifo(fifo_name, 0666);
 }
 
-int Fifo_write(int Num, void * Input, int size)
+int Fifo_write(int Num, void * Input, int size, int * fd)
 {
     char fifo_name[100];
     if(!make_fifo_name(Num, fifo_name, sizeof(fifo_name))){
         return -1;
     }
 
-    int fd=open(fifo_name, O_WRONLY | O_SYNC);
-    if(fd<0 && errno == ENXIO){
+    *fd=open(fifo_name, O_WRONLY | O_SYNC);
+    if(*fd<0 && errno == ENXIO){
         perror("open failed:");
         return -1;
     }
 
-    if(write(fd, (char *)Input, size)<0){
+    if(write(*fd, Input, size)<0){
         perror("write failed");
+        close(*fd);
         return -1;
     }
     // close(fd);

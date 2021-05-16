@@ -141,11 +141,10 @@ void Start(char * text, int monitorId, int buffer)
         }
         text=BackTrack(text);
     }
-
-    printf("\n");
+    free(dir); 
+    // printf("\n");
     int flag=send_bloom(monitorId, buffer, Vlist);
     if (flag<0){ // If something goes wrong with fifo_write, free all the allocated memory and return.
-        printf("flag<0\n");
         VirusDestroy(&Vlist);
         exit(1);
     }
@@ -153,6 +152,7 @@ void Start(char * text, int monitorId, int buffer)
     TTYMonitor(Vlist, monitorId, buffer, text);
 
     VirusDestroy(&Vlist);
+    HTDestroy();
     return;
 }
 
@@ -256,5 +256,6 @@ int CountSize(char * text)
         }
         text=BackTrack(text);
     }
+    free(dir);
     return Size;
 }

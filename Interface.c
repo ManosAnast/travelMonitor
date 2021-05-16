@@ -123,24 +123,27 @@ void TTYMonitor(Virus * Vlist, int id, int buffer, char * text)
         timeout.tv_usec = 0; /* and no millionths of seconds */
 
         s=select(maxfd + 1, &fds, NULL, NULL, &timeout);
-        if (!s){
+        // if (!s){
+        //     continue;
+        // }
+        if (s<0 && errno==EINTR){
             continue;
         }
-        if (FD_ISSET(fd, &fds)){
+        else if (FD_ISSET(fd, &fds)){
             res=read(fd, Input, buffer);
             if(res<0){
                 perror("read failed");
                 close(fd);
                 return;
             }
+            if (res == 0){
+                continue;
+            }
         }
         else{
             continue;
         }
         
-        if (res == 0){
-            continue;
-        }
         close(fd);
 
         if(interrupt_flag_usr){
@@ -156,10 +159,11 @@ void TTYMonitor(Virus * Vlist, int id, int buffer, char * text)
         char ** Array=unserialize_commands(Input);
 
         if(!strcmp(Array[0], "exit")){
-            // for (int i = 0; i < 2; i++){
-            //     free(Array[i]);
-            // }
-            // free(Array);
+            for (int i = 0; i < 6; i++){
+                free(Array[i]);
+            }
+            free(Array);
+            free(Input);   
             break;
         }
         if (!strcmp(Array[0], "travelRequest")){
@@ -175,7 +179,7 @@ void TTYMonitor(Virus * Vlist, int id, int buffer, char * text)
             }
             searchVaccinationStatusMonitor(id, Array[1]);
         }
-        
+        free(Input);   
     }
-    return;    
+    return;
 }

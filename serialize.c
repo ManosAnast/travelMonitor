@@ -6,6 +6,7 @@ int serialize_bloom(bloom filter, char * VirusName, int count, void ** output)
     int size=Bytes+3*sizeof(int)+strlen(VirusName);
     int Length=0;
 
+    *output=(void *)calloc(size, sizeof(void));
     //Keeps the number of bytes that the fifo is going to send.
     memcpy(*output+Length, &count, sizeof(int));
 
@@ -109,23 +110,25 @@ int receive_bloom(int id, Virus * Vlist, int buffer, void * input, int fd, int *
 
 int send_bloom(int monitorId, int buffer, Virus * VTemp)
 {
-    int size=0;
+    int size=0, fd;
     // printf("1 virus[%p]\n", Vlist);
     // Virus * VTemp=Vlist;
     // printf("2 virus[%p]\n", Vlist);
     int count=VirusCount(VTemp);
-    void * output;
     VTemp=VTemp->Next;
+    void * output;
     while (VTemp != NULL){
         size = serialize_bloom(VTemp->filter, (VTemp->VirusName), count, &output);
-        int flag=Fifo_write(monitorId, output, size);
+        int flag=Fifo_write(monitorId, output, size, &fd);
         if (flag < 0){
             return -1;
         }
         VTemp=VTemp->Next;
+        free(output);
     }
     // printf("3 virus[%p]\n", Vlist);
-    free(VTemp);
+    close(fd);
+    free(VTemp); 
     return 0;
 }
 
@@ -165,7 +168,7 @@ char ** unserialize_commands(void * input)
     int size; 
     for (int i = 0; i < 6; i++){
         memcpy(&size, input+Length, sizeof(int));
-        Array[i]=(char *)calloc(size, sizeof(char));
+        Array[i]=(char *)calloc(size+1, sizeof(char));
 
         Length+=sizeof(int);
         memcpy(Array[i], input+Length, size);

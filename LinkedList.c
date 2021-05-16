@@ -25,7 +25,6 @@ void LLInsertHelper(LinkedList ** List, int Key) // It is used only for the 0th 
     }
     /*Make a new node*/
     NewNode=(LinkedList *)calloc(1, sizeof(LinkedList));
-    NewNode->Next=(LinkedList *)calloc(1, sizeof(LinkedList));
     NewNode->Id=Key;
 
     /*Connect the new node to the correct position*/
@@ -71,7 +70,6 @@ void LLDestroy(LinkedList ** List)
     LinkedList * Current=*List, *Next;
     while (Current!= NULL){
         Next=Current->Next;
-        free(Current->Next);
         free(Current);
         Current=Next;
     }

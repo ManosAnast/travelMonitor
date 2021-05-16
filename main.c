@@ -56,7 +56,7 @@ int main(int argc, char * argv[])
     // Traverse the input directory and assign the countries to the monitors
     DIR * dir=opendir(input);
     struct dirent * ent;
-    int i=0;
+    int i=0, fd;
     while ((ent = readdir(dir)) != NULL){
         input=FrontTrack(input, ent->d_name);
         if ( strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){
@@ -67,8 +67,8 @@ int main(int argc, char * argv[])
             }
             if( (path_stat.st_mode & S_IFMT) == S_IFDIR){ //Directory
                 CountryInsert(&Clist, input, i, 0);
-                printf("%s\n", input);
-                Fifo_write(i, input, (strlen(input)+1)*sizeof(char)); 
+                Fifo_write(i, input, (strlen(input)+1)*sizeof(char), &fd); 
+                close(fd);
                 // break;
             }
             i+=1;

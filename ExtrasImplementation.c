@@ -175,19 +175,19 @@ Country * CountrySearch(Country * CList, char * Name)
 
 void CountryInsert(Country ** CList, char * CName, int Id, int pid)
 {
+    char * Name=FixName(CName);
+    int Length=strlen(Name);
     Country * Temp=*CList;
     while (Temp->Next != NULL){
         if (Temp->Id == Id){
-            char * Name=FixName(CName);
-            Temp->CName=(char *)calloc(strlen(Name)+1, sizeof(char)); strcpy(Temp->CName, Name);
+            Temp->CName=(char *)realloc(Temp->CName, (Length+1)*sizeof(char)); strcpy(Temp->CName, Name);
             free(Name);
             return;
         }
         Temp=Temp->Next;
     }
     Country * NewNode=(Country *)calloc(1, sizeof(Country));
-    char * Name=FixName(CName);
-    NewNode->CName=(char *)calloc(strlen(Name)+1, sizeof(char)); strcpy(NewNode->CName, Name);
+    NewNode->CName=(char *)calloc(Length+1, sizeof(char)); strcpy(NewNode->CName, Name);
     NewNode->Id=Id; NewNode->pid=pid; NewNode->Next=NULL;
     Temp->Next=NewNode;
     free(Name);

@@ -119,6 +119,7 @@ void addVaccinationRecords(Virus * Vlist, char * text)
                     /* If the citizen has been vaccinated, yes, insert true. Otherwise insert false*/
                     if (!strcmp(Array[6],"NO")){
                         if(HTSearch(atoi(Array[0]), Array[5])==NULL){
+                            printf("no\n");
                             int Flag=HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], false, Array[7]);
                             if (Flag){ // If the hash table insertion had an error, don't insert to the other structs.
                                 VirusInsert(&(Vlist->Next), Array[0], Array[5], false , Array[7]);
@@ -127,6 +128,7 @@ void addVaccinationRecords(Virus * Vlist, char * text)
                     }
                     else if (!strcmp(Array[6],"YES")){
                         if(HTSearch(atoi(Array[0]), Array[5])==NULL){
+                            printf("yes\n");
                             int Flag=HTInsert(atoi(Array[0]), Array[1], Array[2], Array[3], atoi(Array[4]), Array[5], true, Array[7]);
                             if(Flag){  // If the hash table insertion had an error, don't insert to the other structs.
                                 VirusInsert(&(Vlist->Next), Array[0], Array[5], true, Array[7]);
@@ -147,11 +149,10 @@ void addVaccinationRecords(Virus * Vlist, char * text)
         printf("14 entered addVaccinationRecords\n");
         text=BackTrack(text);
     }
-    Citizens * Rec=HTSearch(0, "VIRUS1");
-    printf("end: %d\n", Rec==NULL);
+    free(dir);
     int size, fd;
     char ** Array=(char **)calloc(1, sizeof(char *));
-    Array[0]=(char *)calloc(strlen(NULLstring), sizeof(char)); strcpy(Array[0], NULLstring);
+    Array[0]=(char *)calloc(strlen(NULLstring)+1, sizeof(char)); strcpy(Array[0], NULLstring);
     void * Input=serialize_commands(Array, &size);
     Fifo_writeCommands(0, Input, size, &fd); close(fd);
     free(Array[0]); free(Array);

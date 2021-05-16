@@ -5,17 +5,18 @@ void SendSignal(Country * Temp, int signo)
     int size, fd;
     
     char ** Array=(char **)calloc(1, sizeof(char *));
-    Array[0]=(char *)calloc(strlen(NULLstring), sizeof(char)); strcpy(Array[0], NULLstring);
+    Array[0]=(char *)calloc(strlen(NULLstring)+1, sizeof(char)); strcpy(Array[0], NULLstring);
+    
+    kill(Temp->pid, signo);
     
     // printf("Not the array calloc\n");
     void * input=serialize_commands(Array, &size);
     // printf("1Not the array calloc\n");
     Fifo_writeCommands(Temp->Id, input, size, &fd); close(fd);
     // printf("2Not the array calloc\n");
-    free(Array[0]); free(Array);
+    free(input); free(Array[0]); free(Array);
     // printf("3Not the array calloc\n");
       
-    kill(Temp->pid, signo);
     
     char fifo_name[100];
     if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", Temp->Id)<0){
@@ -48,9 +49,11 @@ void SendSignal(Country * Temp, int signo)
         if(res<0){
             perror("read failed");
             close(fd);
+            free(Input);
             return;
         }
     }
+    free(Input);
     
     // void * Input=Fifo_readCommands(Temp->Id, 100, &fd); close(fd);
     // char ** Answer=unserialize_commands(Input);
@@ -58,7 +61,7 @@ void SendSignal(Country * Temp, int signo)
 
 void signal_usr(int signo)
 {
-    // printf("receive signal\n");
+    printf("receive signal\n");
     interrupt_flag_usr = 1;
 }
 

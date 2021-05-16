@@ -64,6 +64,7 @@ void travelStat(MonitorCheck * MonitorList, Country * Clist, char * VirusName, c
             CTemp=CTemp->Next;
 
         }
+        free(Timing1); free(Timing2);
         return;
     }
     MonitorCheck * Temp = MonitorList;
@@ -75,6 +76,7 @@ void travelStat(MonitorCheck * MonitorList, Country * Clist, char * VirusName, c
         Temp=Temp->Next;
     }
     printf("TOTAL REQUESTS %d\nACCEPTED %d\nREJECTED %d\n", accepted+rejected, accepted, rejected);
+    free(Timing1); free(Timing2);
     return;
 }
 

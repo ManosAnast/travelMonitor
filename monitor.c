@@ -10,7 +10,7 @@ int main(int args, char * argv[])
     int buffer=atoi(argv[2]);
     int fd;
     BloomNum=atoi(argv[3]);
-    char * Country=(char *)malloc(buffer*sizeof(char));
+    char * Country;
     Country=(char *)Fifo_read(monitorId, buffer, &fd);
     interrupt_flag_usr =0; interrupt_flag_iq=0; interrupt_flag_kill=0;
     // printf("monitor%d: %s\n", monitorId, Country);

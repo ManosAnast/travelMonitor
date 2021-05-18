@@ -41,6 +41,17 @@ void LLInsertHelper(LinkedList ** List, int Key);
 */
 void LLDelete(LinkedList * List, int Key);
 
+/* Takes an Id(Item) and searches for the node that corresponds to the citizen that has this Id.
+ * If the citizen exists, returns the node.
+ * If the citizen doesn't exist, returns null.
+ *
+ * Item: Citizen Id.
+ * Virus: Virus that the citizen that we want, has been inserted with.
+ *
+ * Return: 
+ *  If citizen exist, pointer to citizen.
+ *  If citizen doesn't exist, NULL.
+*/
 LinkedList * LLSearch(LinkedList * List, int Item);
 
 /* Takes a LinkedList and frees all of it's contents.

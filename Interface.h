@@ -27,19 +27,35 @@ void MCDestroy(MonitorCheck * MonitorList);
 */
 void TTY(Virus * Vlist, Country * Clist);
 
-
-/* Implemention of the vaccinateStatusBloom command.
- * vaccinationStatusBloom: Takes an id and a virus. Checks at the virus bloomfilter if the id has been inserted and prints the suitable message.
+/* Implemention of the travelRequest command, for the travelmonitor.
+ * travelRequest: Takes an id and a virus. Checks at the bloom filter that has been send to it, if the id hasn't been inserted and prints the suitable message.
+ *                If it has been inserted, call the travelRequestmonitor(MonitorInterface.h)
  * 
- * Vlist: Virus list. (See Virus.h)
  * Id: Citizens Id that we want to see hers/his vaccination status. In string form
  * VirusName: Name of the virus that we want to check.
  * 
 */
-void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName);
-
 void travelRequest(MonitorCheck * MonitorList , Virus * Vlist, char ** Array, Country * Clist);
 
+/* Implemention of the travelStats command.
+ * travelStat: Prints the stats for the request that have been made for travel.
+ * 
+ * MonitorList: MonitorCheck list.
+ * Clist: Country list.
+ * VirusName: Name of the virus that we want to check.
+ * Date1: from date.
+ * Date2: to date.
+ * Country: Country name.
+ * 
+*/
 void travelStat(MonitorCheck * MonitorList, Country * Clist, char * VirusName, char * Date1, char * Date2, char * Country);
 
+/* Implemention of the searchVaccinationStatus command.
+ * searchVaccinationStatus: Prints the information that we have about a citizen.
+ * 
+ * Vlist: Virus list.
+ * Clist: Country list.
+ * Array: array of strings. Contains the command name and the citizen id.
+ * 
+*/
 void searchVaccinationStatus(Virus * Vlist, Country * Clist, char ** Array);

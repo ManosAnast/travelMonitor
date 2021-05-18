@@ -36,13 +36,25 @@ Country * CountrySearch(Country * CList, char * Name);
 */
 void CountryInsert(Country ** CList, char * CName, int Id, int pid);
 
+/* Takes an input dir name and returns the countries name.
+ * 
+ * CName: input dir name.
+ * 
+*/
 char * FixName(char * CName);
 
+/* Takes a country list and a country name and returns the id that coresponds to that country name.
+ * 
+ * CList: Country list.
+ * Name: Name of the country that we want to insert.
+ * 
+ * Returns:
+ *  If the country name exists, the monitorid.
+ *  If the countru name doesn't exists, -1.
+*/
 int CountryId(Country * CList, char * CName);
 
-char * CountryFind(Country * CList, int monitorId);
-
-/* Delete all the country lists nodes.
+/* Delete all country lists nodes.
  * 
 */
 void CountryDestroy(Country ** CList);

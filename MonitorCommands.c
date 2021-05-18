@@ -5,6 +5,7 @@ void travelRequestMonitor(char * Id, char * VirusName)
     Date * VaccDate;
     int fd;
 
+    // Search for the citizen that want to travel. If the citizen is vaccinated, save the date. Otherwise make the VaccDate null.
     Citizens * Rec=HTSearch(atoi(Id), VirusName); 
     if (Rec->Vaccinated){
         VaccDate=Rec->Timing;
@@ -14,23 +15,26 @@ void travelRequestMonitor(char * Id, char * VirusName)
     }
 
     int Length;
-    if (VaccDate==NULL){
+    if (VaccDate==NULL){ // If the citizen hasn't been vaccinated, send to travelmonitor no.
         char ** Answer=(char **)calloc(2, sizeof(char *));
-        Answer[0]=(char *)calloc(3, sizeof(char));
-        strcpy(Answer[0], "NO");
-        Answer[1]=(char *)calloc(strlen(NULLstring)+1, sizeof(char));strcpy(Answer[3], NULLstring);
+        Answer[0]=(char *)calloc(3, sizeof(char)); strcpy(Answer[0], "NO");
+        Answer[1]=(char *)calloc(strlen(NULLstring)+1, sizeof(char));strcpy(Answer[1], NULLstring);
+
         void * input=serialize_commands(Answer, &Length);
         Fifo_writeCommands(monitorId, input, Length, &fd);
+
         free(Answer[0]); free(Answer[1]); free(Answer); free(input);
     }
-    else{
+    else{ // Otherwise, send the date that the citizen has been vaccinated at.
         char ** Answer=(char **)calloc(4, sizeof(char *));
         Answer[0]=(char *)calloc(3, sizeof(char));sprintf(Answer[0], "%d", VaccDate->Days);
         Answer[1]=(char *)calloc(3, sizeof(char));sprintf(Answer[1], "%d", VaccDate->Month);
         Answer[2]=(char *)calloc(5, sizeof(char));sprintf(Answer[2], "%d", VaccDate->Year);
         Answer[3]=(char *)calloc(strlen(NULLstring)+1, sizeof(char));strcpy(Answer[3], NULLstring);
+
         void * input=serialize_commands(Answer, &Length);
         Fifo_writeCommands(monitorId, input, Length, &fd);
+
         free(Answer[0]); free(Answer[1]); free(Answer[2]); free(Answer[3]); free(Answer); free(input);
     }
     close(fd);
@@ -38,35 +42,43 @@ void travelRequestMonitor(char * Id, char * VirusName)
 
 void searchVaccinationStatusMonitor(char * Id)
 {
+    // Search for the citizen that we want his/hers vaccination status.
     Citizens * Rec = HTSearchID(atoi(Id));
+
     int Length, fd;
-    if (Rec == NULL){
+    if (Rec == NULL){ // If there is no citizen with this id, send no.
         char ** Answer=(char **)calloc(2, sizeof(char *));
         Answer[0]=(char *)calloc(3, sizeof(char));
         strcpy(Answer[0], "NO");
         Answer[1]=(char *)calloc(strlen(NULLstring)+1, sizeof(char));strcpy(Answer[1], NULLstring);
+        
         void * input=serialize_commands(Answer, &Length);
         Fifo_writeCommands(monitorId, input, Length, &fd);
+        
         free(Answer[0]); free(Answer[1]); free(Answer);
-        free(input);
+        free(input); close(fd);
         return;
     }
+
+    // Otherwise, send his/hers informations.
     char ** Answer=(char **)calloc(6, sizeof(char *));
-    Answer[0]=(char *)calloc(4, sizeof(char));sprintf(Answer[0], "%d", Rec->citizenId);
-    Answer[1]=(char *)calloc(strlen(Rec->FirstName)+1, sizeof(char));strcpy(Answer[1], Rec->FirstName);
-    Answer[2]=(char *)calloc(strlen(Rec->LastName)+1, sizeof(char));strcpy(Answer[2], Rec->LastName);
-    Answer[3]=(char *)calloc(4, sizeof(char));sprintf(Answer[3], "%d", Rec->Age);
-    Answer[4]=(char *)calloc(strlen(Rec->Virus)+1, sizeof(char));strcpy(Answer[4], Rec->Virus);
-    if(Rec->Timing != NULL){
+    Answer[0]=(char *)calloc(4, sizeof(char)); sprintf(Answer[0], "%d", Rec->citizenId);
+    Answer[1]=(char *)calloc(strlen(Rec->FirstName)+1, sizeof(char)); strcpy(Answer[1], Rec->FirstName);
+    Answer[2]=(char *)calloc(strlen(Rec->LastName)+1, sizeof(char)); strcpy(Answer[2], Rec->LastName);
+    Answer[3]=(char *)calloc(4, sizeof(char)); sprintf(Answer[3], "%d", Rec->Age);
+    Answer[4]=(char *)calloc(strlen(Rec->Virus)+1, sizeof(char)); strcpy(Answer[4], Rec->Virus);
+    if(Rec->Timing != NULL){ // If the citizen has been vaccianted, send the date.
         Answer[5]=(char *)calloc(11, sizeof(char));sprintf(Answer[5], "%d-%d-%d", Rec->Timing->Days, Rec->Timing->Month, Rec->Timing->Year);
     }
-    else{
+    else{ // Otherwise, send...
         Answer[5]=(char *)calloc(19, sizeof(char));strcpy(Answer[5], "NOT YET VACCINATED");
     }
+
     void * input=serialize_commands(Answer, &Length);
     Fifo_writeCommands(monitorId, input, Length, &fd);
+
     free(Answer[0]); free(Answer[1]); free(Answer[2]); free(Answer[3]); free(Answer[4]); free(Answer[5]); free(Answer);
-    free(input);
+    free(input); close(fd);
     return;
 }
 
@@ -78,16 +90,18 @@ int addVaccinationRecords(Virus * Vlist, char * text)
     DIR * dir=opendir(text);
     struct dirent * ent;
     int i=0;
+    // Loop that traverses the directory. 
     while ((ent = readdir(dir)) != NULL){
         text=FrontTrack(text, ent->d_name);
-        if ( strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){
+        if ( strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){ 
             struct stat path_stat;
             
-            if( lstat(text, &path_stat) == -1){
+            if( lstat(text, &path_stat) == -1){ // Check for lstat error.
                 perror("monitor Stat");
+                printf("Something went wrong.\n");
                 return -1;
             }
-            else if( (path_stat.st_mode & S_IFMT) == S_IFREG){ //File
+            else if( (path_stat.st_mode & S_IFMT) == S_IFREG){ // If it is a file and not dir.
             
                 fp=fopen(text , "r");   
 
@@ -147,11 +161,16 @@ int addVaccinationRecords(Virus * Vlist, char * text)
         text=BackTrack(text);
     }
     free(dir);
+    
+    // Send to fifo an empty message. For synchronization.
     int size, fd;
     char ** Array=(char **)calloc(1, sizeof(char *));
     Array[0]=(char *)calloc(strlen(NULLstring)+1, sizeof(char)); strcpy(Array[0], NULLstring);
+
     void * Input=serialize_commands(Array, &size);
     Fifo_writeCommands(monitorId, Input, size, &fd);
+    
     free(Array[0]); free(Array); free(Input); close(fd);
+    printf("addVaccinationRecords executed successfully.\n");
     return 0;
 }

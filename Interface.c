@@ -69,11 +69,12 @@ void TTY(Virus * Vlist, Country * Clist)
         if(interrupt_flag_iq){
             Country * CTemp=Clist->Next;
             while (CTemp != NULL){
-                kill(CTemp->pid, SIGTERM);
-                sleep(2);
-                waitpid(CTemp->pid, &status, WNOHANG);
-                kill(CTemp->pid, SIGKILL);
-                waitpid(CTemp->pid, &status, 0);
+                // kill(CTemp->pid, SIGTERM);
+                // sleep(2);
+                // waitpid(CTemp->pid, &status, WNOHANG);
+                // kill(CTemp->pid, SIGKILL);
+                // waitpid(CTemp->pid, &status, 0);
+                SendSignal(CTemp, SIGINT);
                 CTemp=CTemp->Next;
             }
             break;

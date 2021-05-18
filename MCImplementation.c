@@ -2,11 +2,10 @@
 
 MonitorCheck *  MCInit()
 {
+    // Allocate a node and give null values.
     MonitorCheck * MonitorList=(MonitorCheck *)calloc(1, sizeof(MonitorCheck));
-    MonitorList->VirusName=(char *)calloc(strlen(NULLstring)+1, sizeof(char));
-    strcpy(MonitorList->VirusName, NULLstring);
-    MonitorList->CountryName=(char *)calloc(strlen(NULLstring)+1, sizeof(char));
-    strcpy(MonitorList->CountryName, NULLstring);
+    MonitorList->VirusName=(char *)calloc(strlen(NULLstring)+1, sizeof(char)); strcpy(MonitorList->VirusName, NULLstring);
+    MonitorList->CountryName=(char *)calloc(strlen(NULLstring)+1, sizeof(char)); strcpy(MonitorList->CountryName, NULLstring);
     MonitorList->Accepted=0; MonitorList->Rejected=0;
     MonitorList->RequestDate=NULL;
     MonitorList->Next=NULL;
@@ -17,17 +16,17 @@ void MCInsert(MonitorCheck * MonitorList, char * VName, char * CName, bool Accep
 {
     MonitorCheck * Temp=MonitorList;
     while (Temp->Next!=NULL){
+        // If there has been an identical travel request, update the data for accept and reject.
         if ( !strcmp(Temp->VirusName, VName) && !strcmp(Temp->CountryName, CName) && CheckDateEq(RequestDate, Temp->RequestDate)){
             Temp->Accepted+=(int)Accepted; Temp->Rejected+=(int)Rejected;
             return;
         }
         Temp=Temp->Next;
     }
+    // If there hasn't been an identical travel request, make a new node.
     MonitorCheck * NewNode=(MonitorCheck *)calloc(1, sizeof(MonitorCheck));
-    NewNode->VirusName=(char *)calloc(strlen(VName)+1, sizeof(char));
-    strcpy(NewNode->VirusName, VName);
-    NewNode->CountryName=(char *)calloc(strlen(CName)+1, sizeof(char));
-    strcpy(NewNode->CountryName, CName);
+    NewNode->VirusName=(char *)calloc(strlen(VName)+1, sizeof(char)); strcpy(NewNode->VirusName, VName);
+    NewNode->CountryName=(char *)calloc(strlen(CName)+1, sizeof(char)); strcpy(NewNode->CountryName, CName);
     NewNode->Accepted=(int)Accepted; NewNode->Rejected=(int)Rejected;
     NewNode->RequestDate=RequestDate;
     NewNode->Next=NULL;

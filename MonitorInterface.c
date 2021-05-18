@@ -115,11 +115,13 @@ void TTYMonitor(Virus * Vlist, char * text)
     
     while (1){
         void * Input=calloc(buffer, sizeof(void)); 
+
         fd=open(fifo_name, O_RDONLY);
         if(fd<0){
             perror("open failed:");
             return;
         }
+
         struct timeval  timeout;
         fd_set fds;
         int maxfd=fd;
@@ -132,7 +134,7 @@ void TTYMonitor(Virus * Vlist, char * text)
         timeout.tv_usec = 0; /* and no millionths of seconds */
 
         s=select(maxfd + 1, &fds, NULL, NULL, &timeout);
-        if (s<0 && errno==EINTR){
+        if (s<0 && errno==EINTR){ // Check for select error and signal.
             continue;
         }
         else if (FD_ISSET(fd, &fds)){
@@ -152,19 +154,27 @@ void TTYMonitor(Virus * Vlist, char * text)
         
         close(fd);
 
+        // Check for signals.
         if(interrupt_flag_usr){
-            if(addVaccinationRecords(Vlist, text)<0){
-                printf("Something went wrong.\n");
-            }
-            printf("addVaccinationRecords executed successfully.\n");
-            interrupt_flag_usr=0;// continue;
+            addVaccinationRecords(Vlist, text);
+            interrupt_flag_usr=0;
         }
 
         if(interrupt_flag_kill){
             interrupt_flag_kill=0;
+
+            int size, fd;
+            char ** Array=(char **)calloc(1, sizeof(char *));
+            Array[0]=(char *)calloc(strlen(NULLstring)+1, sizeof(char)); strcpy(Array[0], NULLstring);
+
+            void * Input=serialize_commands(Array, &size);
+            Fifo_writeCommands(monitorId, Input, size, &fd);
+
+            free(Array[0]); free(Array); free(Input); close(fd);
             break;
         }
 
+        // Unserialize the commands.
         char ** Array=unserialize_commands(Input);
 
         if(!strcmp(Array[0], "exit")){
@@ -179,7 +189,6 @@ void TTYMonitor(Virus * Vlist, char * text)
         }
         else if ( !strcmp(Array[0], "searchVaccinationStatus") ){
             searchVaccinationStatusMonitor(Array[1]);
-            
         }
         
         for (int i = 0; i < 6; i++){

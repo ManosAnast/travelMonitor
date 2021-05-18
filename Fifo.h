@@ -12,7 +12,6 @@
 # include <signal.h>
 # include <sys/wait.h>
 # include <sys/select.h>
-# define Parent "travelMonitor"
 
 extern int buffer;
 
@@ -29,7 +28,6 @@ bool make_fifo_name(int id, char * name, size_t name_max);
 /* Initialiaze a fifo.
  *
  * Num: Number of monitor that the fifo is initialized for. It is given to the name.
- * Read: Type of fifo. If read=true then it is a read fifo. If it is false then it is a write.
  *
  * return: 0 if everything goes fine. Otherwise, it returns -1.
 */
@@ -39,6 +37,8 @@ int Fifo_init(int Num);
  *
  * Num: Number of monitor that the fifo is for.
  * Input: Data that we want to write to fifo.
+ * size: Size of data that we want to write to fifo.
+ * fd: Fifo's file descriptor.
  * 
  * return: 0 if everything goes fine. Otherwise, it returns -1.
 */
@@ -47,7 +47,8 @@ int Fifo_write(int Num, void * Input, int size, int *fd);
 /* Read from fifo.
  *
  * Num: Number of monitor that the fifo is for.
- * 
+ * fd: Fifo's file descriptor.
+ *
  * return: The fifo's data if everything goes fine. Otherwise, it returns NULL.
 */
 void * Fifo_read(int Num, int * fd);
@@ -56,6 +57,8 @@ void * Fifo_read(int Num, int * fd);
  *
  * Num: Number of monitor that the fifo is for.
  * Input: Data that we want to write to fifo.
+ * size: Size of data that we want to write to fifo.
+ * fd: Fifo's file descriptor.
  * 
  * return: 0 if everything goes fine. Otherwise, it returns -1.
 */
@@ -64,6 +67,7 @@ int Fifo_writeCommands(int Num, void * Input, int size, int * fd);
 /* Read from fifo.
  *
  * Num: Number of monitor that the fifo is for.
+ * fd: Fifo's file descriptor.
  * 
  * return: The fifo's data if everything goes fine. Otherwise, it returns NULL.
 */

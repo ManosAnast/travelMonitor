@@ -4,16 +4,18 @@ void SendSignal(Country * Temp, int signo)
 {
     int size, fd;
     
+    // Allocation for the array that we send to the fifo for synchronization.
     char ** Array=(char **)calloc(1, sizeof(char *));
     Array[0]=(char *)calloc(strlen(NULLstring)+1, sizeof(char)); strcpy(Array[0], NULLstring);
     
     kill(Temp->pid, signo);
     
+    // Send of the array.
     void * input=serialize_commands(Array, &size);
     Fifo_writeCommands(Temp->Id, input, size, &fd); close(fd);
     free(input); free(Array[0]); free(Array);
       
-    
+    // Give to fifo_name the name of the fifo that we are going to open for read.    
     char fifo_name[100];
     if(snprintf(fifo_name, sizeof(fifo_name), "./fifo/TravelMonitor%d", Temp->Id)<0){
         return;
@@ -39,7 +41,7 @@ void SendSignal(Country * Temp, int signo)
             perror("Select"); exit(EXIT_FAILURE);
         }
         
-        if (FD_ISSET(fd, &fds)){
+        if (FD_ISSET(fd, &fds)){ // If we read, break and return.
             res=read(fd, Input, buffer);
             break;
         }
@@ -70,11 +72,6 @@ void signal_chld(int signo)
             return;
         }
     }
-}
-
-void signal_quit(int signo)
-{
-
 }
 
 void signal_kill(int signo)

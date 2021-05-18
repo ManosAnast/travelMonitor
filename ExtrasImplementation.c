@@ -103,21 +103,6 @@ int VirusCount(Virus * VList)
     return count;
 }
 
-
-// void VirusSkipList(Virus ** VList)
-// {
-//     Virus * Temp= *VList;
-//     Temp=Temp->Next;
-    
-//     while (Temp != NULL){
-//         SLInsert(Temp->vaccinated_persons); 
-//         SLInsert(Temp->not_vaccinated_persons);
-//         Temp=Temp->Next;
-//     }
-    
-// }
-
-
 Virus * VirusFind(Virus * Vlist, char * VirusName)
 {
     Virus * Temp= Vlist;
@@ -142,17 +127,6 @@ void VirusDestroy(Virus ** VList)
         bloomDestroy(&(Current->filter)); 
         free(Current);
         Current=Next;
-    }
-    return;
-}
-
-void VirusPrint(Virus * Vlist)
-{
-    Virus * Temp=Vlist;
-    while (Temp != NULL)
-    {
-        printf("%s, %d, %d\n", Temp->VirusName, Temp->vaccinated_persons==NULL, Temp->not_vaccinated_persons==NULL);
-        Temp=Temp->Next;
     }
     return;
 }
@@ -222,18 +196,6 @@ int CountryId(Country * CList, char * CName)
         Temp=Temp->Next;
     }
     return -1;
-}
-
-char * CountryFind(Country * CList, int monitorId)
-{
-    Country * Temp=CList;
-    while (Temp != NULL){
-        if(Temp->Id == monitorId){
-            return Temp->CName;
-        }
-        Temp=Temp->Next;
-    }
-    return NULLstring;
 }
 
 void CountryDestroy(Country ** CList)

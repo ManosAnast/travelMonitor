@@ -58,24 +58,26 @@ int CountSize(char * text)
     DIR * dir=opendir(text);
     struct dirent * ent;
     int i=0;
+    // Loop that traverses the input dir
     while ((ent = readdir(dir)) != NULL){
         text=FrontTrack(text, ent->d_name);
         if ( strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..")){
             struct stat path_stat;
+
             if( lstat(text, &path_stat) == -1){
                 perror("monitor Stat");
                 return -1;
             }
             else if( (path_stat.st_mode & S_IFMT) == S_IFREG){ //File
                 fp=fopen(text , "r");   
+
                 // Find the number of entries that the given file has
-                
                 while(1) {
                     ch = getc(fp);
                     if( feof(fp) ) { 
                         break ;
                     }
-                    if(ch == '\n'){  //Finds how many students are added.
+                    if(ch == '\n'){  //Finds how many citizens are added.
                         Size+=1;
                     }
                 }

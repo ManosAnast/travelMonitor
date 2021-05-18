@@ -35,7 +35,6 @@ int main(int argc, char * argv[])
     sprintf(filternum, "%d", BloomNum);
     
     Country * Clist=CountryCreate();
-    int child;
     for(int i=0;i<numMonitors;i++) // loop will run n times (n=5)
     {
         Fifo_init(i);
@@ -80,7 +79,7 @@ int main(int argc, char * argv[])
     Virus * Vlist = VirusInit();
     char * country;
     for (int i = 0; i < numMonitors; i++){
-        int flag = receivebloomtest(i, Vlist);
+        int flag = receive_bloom(i, Vlist);
     }
 
     TTY(Vlist, Clist);

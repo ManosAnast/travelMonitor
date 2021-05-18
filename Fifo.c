@@ -26,18 +26,19 @@ int Fifo_write(int Num, void * Input, int size, int * fd)
         return -1;
     }
 
+    // Open fifo for write.
     *fd=open(fifo_name, O_WRONLY | O_SYNC);
     if(*fd<0 && errno == ENXIO){
         perror("open failed:");
         return -1;
     }
 
+    // Write to fifo. If write return -1 error.
     if(write(*fd, Input, size)<0){
         perror("write failed");
         close(*fd);
         return -1;
     }
-    // close(fd);
     return 0;
 }
 
@@ -49,11 +50,14 @@ void * Fifo_read(int Num, int * fd)
         return NULL;
     }
 
+    // Open fifo for read.
     *fd=open(fifo_name, O_RDONLY | O_SYNC);
     if(*fd<0){
         perror("open failed:");
         return NULL;
     }
+
+    // Read from fifo. If read return -1 error.
     if(read(*fd, Input, buffer)<0){
         perror("read failed");
         close(*fd);
@@ -69,12 +73,14 @@ int Fifo_writeCommands(int Num, void * Input, int size, int * fd)
         return -1;
     }
 
+    // Open fifo for write.
     *fd=open(fifo_name, O_WRONLY);
     if(*fd<0 && errno == ENXIO){
         perror("open failed:");
         return -1;
     }
 
+    // Write to fifo. If write return -1 error.
     if(write(*fd, (char *)Input, size)<0){
         perror("write failed");
         return -1;
@@ -90,11 +96,14 @@ void * Fifo_readCommands(int Num, int * fd)
         return NULL;
     }
 
+    // Open fifo for read.
     *fd=open(fifo_name, O_RDONLY);
     if(*fd<0){
         perror("open failed:");
         return NULL;
     }
+
+    // Read from fifo. If read return -1 error.
     if(read(*fd, Input, buffer)<0){
         perror("read failed");
         close(*fd);

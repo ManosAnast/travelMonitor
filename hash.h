@@ -91,6 +91,9 @@ void HTCreate(int Size);
  * Vaccinated: Boolean that represents the vaccination status of the citizen for the virus.
  * DateStr: String that has the date of vaccination.
  *
+ * Return: 
+ *  If everything goes fine, pointer to citizen.
+ *  If there is a problem, NULL.
 */
 Citizens * NewRecord(int Id, char * FirstName, char * LastName, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr);
 
@@ -104,42 +107,34 @@ Citizens * NewRecord(int Id, char * FirstName, char * LastName, char * Country, 
  * Vaccinated: Boolean that represents the vaccination status of the citizen for the virus.
  * DateStr: String that has the date of vaccination.
  *
+ * Return: 
+ *  If everything goes fine, 0.
+ *  If there is a problem, -1.
 */
 int HTInsert(int Id, char * FirstName, char * LastName, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr);
-
-int HTInsert2(int Id, char * FirstName, char * LastName, char * Country, int Age, char * Virus, bool Vaccinated, char * DateStr);
 
 /* Prints all the nodes of a Table.
 */
 void HTPrint();
 
-/* Takes a Id(Item) and a Virus name and searches for the citizen that has this Id and is inserted with this virus.
- * If the citizen exists, returns the node.
- * If the citizen doesn't exist, returns null.
+/* Takes an Id(Item) and a Virus name and searches for the citizen that has this Id and is inserted with this virus.
  *
  * Item: Citizen Id.
  * Virus: Virus that the citizen that we want, has been inserted with.
  *
+ * Return: 
+ *  If citizen exist, pointer to citizen.
+ *  If citizen doesn't exist, NULL.
 */
 Citizens * HTSearch(int Item, char * Virus);
 
 /* Takes a Id(Item) and a Virus name and searches for the citizen that has this Id and is inserted with this virus.
- * If the citizen exists, returns the node.
- * If the citizen doesn't exist, returns null.
  *
  * Item: Citizen Id.
- * Virus: Virus that the citizen that we want, has been inserted with.
- *
-*/
-Citizens * HTSearch2(int Item, char * Virus);
-
-/* Takes a Id(Item) and a Virus name and searches for the citizen that has this Id and is inserted with this virus.
- * If the citizen exists, returns the node.
- * If the citizen doesn't exist, returns null.
- *
- * Item: Citizen Id.
- * Virus: Virus that the citizen that we want, has been inserted with.
- *
+ * 
+ * Return: 
+ *  If citizen exist, pointer to citizen.
+ *  If citizen doesn't exist, NULL.
 */
 Citizens * HTSearchID(int Item);
 

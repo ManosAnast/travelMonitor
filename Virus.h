@@ -34,10 +34,20 @@ Virus * VirusInit();
 */
 void VirusInsert(Virus ** VList, char * CitizenId, char * VName, bool Vaccinated, char * DateStr);
 
-void VirusInsert2(Virus ** VList, char * CitizenId, char * VName, bool Vaccinated, char * DateStr);
-
+/* Takes a bloomfitler and a virus and inserts it to the country list.
+ * 
+ * VList: virus list.
+ * VName: Name of the virus we want to insert.
+ * filter: bloom filter.
+ * 
+*/
 void VirusInsertBloom(Virus ** VList, char * VName, bloom filter);
 
+/* Takes a virus list returns the number of nodes that it has.
+ * 
+ * VList: virus list.
+ * 
+*/
 int VirusCount(Virus * VList);
 
 /* Takes a virus and makes the skiplist for every skiplist that the virus has.
@@ -62,5 +72,3 @@ void VirusDestroy(Virus ** VList);
  * 
 */
 Virus * VirusFind(Virus * Vlist, char * VirusName);
-
-void VirusPrint(Virus * Vlist);

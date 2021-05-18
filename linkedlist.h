@@ -41,15 +41,7 @@ void LLInsertHelper(LinkedList ** List, int Key);
 */
 void LLDelete(LinkedList * List, int Key);
 
-/* Takes a LinkedList and a Level and prints the contents of the list for the given level.
- * 
- * List: Skiplist.
- * Level: The level of the linked list that we want to print
- * 
-*/
-void LLPrint(LinkedList * List, int Level);
-
-LinkedList * LLSearch(LinkedList * List, int Level);
+LinkedList * LLSearch(LinkedList * List, int Item);
 
 /* Takes a LinkedList and frees all of it's contents.
  * 

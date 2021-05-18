@@ -1,4 +1,4 @@
-# include "skiplist.h"
+# include "linkedlist.h"
 
 /* Struct that implements a virus list. 
  * It keeps all the necessary informations that we need for every virus that gets inserted.

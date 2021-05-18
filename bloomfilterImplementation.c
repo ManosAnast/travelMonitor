@@ -1,4 +1,4 @@
-# include "Interface.h"
+# include "bloomfilter.h"
 
 bloom bloomInit(int NumOfBytes)
 {

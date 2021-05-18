@@ -1,4 +1,4 @@
-# include "Interface.h"
+# include "General.h"
 
 int serialize_bloom(bloom filter, char * VirusName, int count, void ** output)
 {
@@ -26,7 +26,7 @@ int serialize_bloom(bloom filter, char * VirusName, int count, void ** output)
     return size;
 }
 
-bloom unserialize_bloom(void * input, char ** VirusName, int * count, int buffer, int *size)
+bloom unserialize_bloom(void * input, char ** VirusName, int * count, int *size)
 {
     int Length=0, filterbytes;
     
@@ -58,24 +58,24 @@ bloom unserialize_bloom(void * input, char ** VirusName, int * count, int buffer
     return filter;
 }
 
-int receivebloomtest(int id, Virus * Vlist, int buffer)
+int receivebloomtest(int id, Virus * Vlist)
 {
     int size=0, /*i=1,*/ fd, count=1;
     char * VirusName;
     for (int i = 0; i < count; i++){
-        void * input =Fifo_read(id, buffer, &fd);
-        receive_bloom(id, Vlist, buffer, input, fd, &count);
+        void * input =Fifo_read(id, &fd);
+        receive_bloom(id, Vlist, input, fd, &count);
         free(input);
     }
 
 }
 
-int receive_bloom(int id, Virus * Vlist, int buffer, void * input, int fd, int * count)
+int receive_bloom(int id, Virus * Vlist, void * input, int fd, int * count)
 {
     int size=0, i=1;
     char * VirusName;
 
-    bloom bloomfilter = unserialize_bloom(input+size, &VirusName, count, buffer, &size); 
+    bloom bloomfilter = unserialize_bloom(input+size, &VirusName, count, &size); 
     int filterbytes=buffer-3*sizeof(int)-strlen(VirusName);
     char * filterbits=(char *)calloc(buffer, sizeof(char));
 
@@ -84,7 +84,7 @@ int receive_bloom(int id, Virus * Vlist, int buffer, void * input, int fd, int *
         num+=1;
     }
     while (i < num){
-        int readbytes=BytestoRead(size, i, buffer);
+        int readbytes=BytestoRead(size, i);
         if(read(fd, input, readbytes)<0){
             perror("read failed");
             close(fd);
@@ -108,12 +108,9 @@ int receive_bloom(int id, Virus * Vlist, int buffer, void * input, int fd, int *
     return 0;
 }
 
-int send_bloom(int monitorId, int buffer, Virus * VTemp)
+int send_bloom(int monitorId, Virus * VTemp)
 {
     int size=0, fd;
-    // printf("1 virus[%p]\n", Vlist);
-    // Virus * VTemp=Vlist;
-    // printf("2 virus[%p]\n", Vlist);
     int count=VirusCount(VTemp);
     VTemp=VTemp->Next;
     void * output;
@@ -126,13 +123,12 @@ int send_bloom(int monitorId, int buffer, Virus * VTemp)
         VTemp=VTemp->Next;
         free(output);
     }
-    // printf("3 virus[%p]\n", Vlist);
     close(fd);
     free(VTemp); 
     return 0;
 }
 
-int BytestoRead(int size, int times, int buffer)
+int BytestoRead(int size, int times)
 {
     int Bytes=size-times*buffer;
     if (Bytes > buffer){
@@ -143,7 +139,7 @@ int BytestoRead(int size, int times, int buffer)
 
 void * serialize_commands(char ** Array, int * Length)
 {
-    void * output=malloc(100*sizeof(void));
+    void * output=malloc(buffer*sizeof(void));
     *Length=0;
     for (int i = 0; i < 6; i++){
         int size=strlen(Array[i]);
@@ -180,7 +176,7 @@ char ** unserialize_commands(void * input)
     return Array;
 }
 
-void * serialize_citizen(Citizens * Rec, int * Length, int buffer)
+void * serialize_citizen(Citizens * Rec, int * Length)
 {
     void * output=malloc(buffer*sizeof(void));
     *Length=0;
@@ -189,9 +185,4 @@ void * serialize_citizen(Citizens * Rec, int * Length, int buffer)
 
     *Length+=sizeof(int);
     // memcpy
-}
-
-Citizens * unserialize_citizen(void * input)
-{
-
 }

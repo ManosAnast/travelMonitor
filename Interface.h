@@ -1,19 +1,22 @@
-# include "TMCommands.h"
+# include "General.h"
 
-void nothing();
+typedef struct MonitorInterface{
+    char * VirusName;
+    char * CountryName;
+    int Accepted;
+    int Rejected;
+    Date * RequestDate;
+    struct MonitorInterface * Next;
+}MonitorCheck;
 
-char * FrontTrack(char * src, char * Next);
+MonitorCheck * MCInit();
 
-char * BackTrack(char * src);
+void MCInsert(MonitorCheck * MonitorList, char * VName, char * CountryName, bool Accepted, bool Rejected, Date * RequestDate);
 
-void BreakString(char *** Array, char * str, const char * s, int Num);
+void MCPrint(MonitorCheck * MonitorList, char * VName, char * CountryName);
 
-/* Takes a file and insert it's contents in hash, also starts the TTY that the program needs.
- *
- * text: Name of file that is needed in order to start the program.
- * 
-*/
-void Start(char * text, int monitorId, int buffer);
+void MCDestroy(MonitorCheck * MonitorList);
+
 
 /* Takes a virus list and a country list and starts the TTY
  * that gives us the interface that we need in order to use some commands.
@@ -24,13 +27,19 @@ void Start(char * text, int monitorId, int buffer);
 */
 void TTY(Virus * Vlist, Country * Clist);
 
-/* Takes the virus list and the country list that the program has created and destroys them
- * by calling the appropriate functions.
+
+/* Implemention of the vaccinateStatusBloom command.
+ * vaccinationStatusBloom: Takes an id and a virus. Checks at the virus bloomfilter if the id has been inserted and prints the suitable message.
  * 
  * Vlist: Virus list. (See Virus.h)
- * CList: Country list. (See Country.h)
+ * Id: Citizens Id that we want to see hers/his vaccination status. In string form
+ * VirusName: Name of the virus that we want to check.
  * 
 */
-void Destroy(Virus * Vlist, Country * CList);
+void VaccinateStatusBloom(Virus * Vlist, char * Id, char * VirusName);
 
-void TTYMonitor(Virus * Vlist, int id, int buffer, char * text);
+void travelRequest(MonitorCheck * MonitorList , Virus * Vlist, char ** Array, Country * Clist);
+
+void travelStat(MonitorCheck * MonitorList, Country * Clist, char * VirusName, char * Date1, char * Date2, char * Country);
+
+void searchVaccinationStatus(Virus * Vlist, Country * Clist, char ** Array);

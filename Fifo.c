@@ -1,4 +1,4 @@
-# include "Interface.h"
+# include "Fifo.h"
 
 // Make of a fifo name. This way, the name that the child and parent create, is the same.
 bool make_fifo_name(int id, char * name, size_t name_max) 
@@ -41,7 +41,7 @@ int Fifo_write(int Num, void * Input, int size, int * fd)
     return 0;
 }
 
-void * Fifo_read(int Num, int buffer, int * fd)
+void * Fifo_read(int Num, int * fd)
 {
     void * Input=calloc(buffer, sizeof(void));
     char fifo_name[100];
@@ -82,7 +82,7 @@ int Fifo_writeCommands(int Num, void * Input, int size, int * fd)
     return 0;
 }
 
-void * Fifo_readCommands(int Num, int buffer, int * fd)
+void * Fifo_readCommands(int Num, int * fd)
 {
     void * Input=calloc(buffer, sizeof(void));
     char fifo_name[100];

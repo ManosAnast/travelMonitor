@@ -1,6 +1,6 @@
 # include "Interface.h"
 
-int Level, BloomNum;
+int buffer, BloomNum;
 volatile sig_atomic_t interrupt_flag_usr, interrupt_flag_iq, interrupt_flag_kill ;
 
 
@@ -10,7 +10,7 @@ int main(int argc, char * argv[])
         printf("Call format: ./travelMonitor –m numMonitors -b bufferSize -s sizeOfBloom -i input_dir\n");
         return 1;
     }
-    int numMonitors, buffer;
+    int numMonitors;
     char * input;
     for (int i = 1; i < argc; i++){
         if ( !strcmp(argv[i],"-m") ){
@@ -69,7 +69,6 @@ int main(int argc, char * argv[])
                 CountryInsert(&Clist, input, i, 0);
                 Fifo_write(i, input, (strlen(input)+1)*sizeof(char), &fd); 
                 close(fd);
-                // break;
             }
             i+=1;
         }
@@ -81,12 +80,11 @@ int main(int argc, char * argv[])
     Virus * Vlist = VirusInit();
     char * country;
     for (int i = 0; i < numMonitors; i++){
-        int flag = receivebloomtest(i, Vlist, buffer);
+        int flag = receivebloomtest(i, Vlist);
     }
 
     TTY(Vlist, Clist);
 
-    nothing();
     // Unlink all the pipes and wait for the processes.
     for(int i=0;i<numMonitors;i++){ // loop will run n times (n=5)
         char fifo_name[100];

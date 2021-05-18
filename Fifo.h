@@ -14,6 +14,7 @@
 # include <sys/select.h>
 # define Parent "travelMonitor"
 
+extern int buffer;
 
 /* Makes the name of the fifo. 
  *
@@ -49,7 +50,7 @@ int Fifo_write(int Num, void * Input, int size, int *fd);
  * 
  * return: The fifo's data if everything goes fine. Otherwise, it returns NULL.
 */
-void * Fifo_read(int Num, int buffer, int * fd);
+void * Fifo_read(int Num, int * fd);
 
 /* Write to fifo.
  *
@@ -66,4 +67,4 @@ int Fifo_writeCommands(int Num, void * Input, int size, int * fd);
  * 
  * return: The fifo's data if everything goes fine. Otherwise, it returns NULL.
 */
-void * Fifo_readCommands(int Num, int buffer, int * fd);
+void * Fifo_readCommands(int Num, int * fd);

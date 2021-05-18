@@ -1,4 +1,4 @@
-# include "Virus.h"
+# include "serialize.h"
 
 /* Struct that implements a country list.
  * It keeps the population for the country.

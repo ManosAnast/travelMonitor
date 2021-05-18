@@ -1,4 +1,4 @@
-# include "Interface.h"
+# include "General.h"
 
 Virus * VirusInit()
 {

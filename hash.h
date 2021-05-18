@@ -2,7 +2,7 @@
 # include "Fifo.h"
 # define NULLstring " "
 
-extern int Level,BloomNum;
+extern int BloomNum;
 
 /* Struct that implements a date.
 */

@@ -3,6 +3,10 @@
         "fifo.h": "c",
         "interface.h": "c",
         "serialize.h": "c",
-        "tmcommands.h": "c"
+        "tmcommands.h": "c",
+        "country.h": "c",
+        "virus.h": "c",
+        "general.h": "c",
+        "hash.h": "c"
     }
 }

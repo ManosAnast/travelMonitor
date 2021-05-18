@@ -1,12 +1,12 @@
-all: clean main.o Interface.o signal.o TMCommands.o Commands.o serialize.o monitor.o Fifo.o TMInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o
-	gcc main.o TMCommands.o signal.o Interface.o serialize.o Commands.o Fifo.o TMInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o -o travelMonitor
-	gcc monitor.o serialize.o signal.o TMCommands.o Commands.o Fifo.o Interface.o TMInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o -o monitor
+all: clean main.o MCImplementation.o General.o Interface.o signal.o MonitorCommands.o Commands.o serialize.o monitor.o Fifo.o MonitorInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o HashImplementation.o
+	gcc main.o  General.o MCImplementation.o signal.o Interface.o serialize.o Commands.o Fifo.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o HashImplementation.o -o travelMonitor
+	gcc monitor.o serialize.o General.o signal.o MonitorCommands.o Fifo.o MonitorInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o HashImplementation.o -o monitor
 
 main.o: main.c
 	gcc -g -c main.c
 
-TMInterface.o: TMInterface.c
-	gcc -g -c TMInterface.c
+MonitorInterface.o: MonitorInterface.c
+	gcc -g -c MonitorInterface.c
 
 Interface.o: Interface.c
 	gcc -g -c Interface.c
@@ -20,9 +20,6 @@ bloomfilterImplementation.o: bloomfilterImplementation.c
 LinkedList.o: LinkedList.c
 	gcc -g -c LinkedList.c
 
-SkiplistImplementation.o: SkiplistImplementation.c
-	gcc -g -c SkiplistImplementation.c
-
 HashImplementation.o: HashImplementation.c
 	gcc -g -c HashImplementation.c
 
@@ -35,8 +32,8 @@ monitor.o: monitor.c
 Commands.o: Commands.c
 	gcc -g -c Commands.c
 
-TMCommands.o: TMCommands.c
-	gcc -g -c TMCommands.c
+MonitorCommands.o: MonitorCommands.c
+	gcc -g -c MonitorCommands.c
 
 serialize.o: serialize.c
 	gcc -g -c serialize.c
@@ -44,5 +41,11 @@ serialize.o: serialize.c
 signal.o: signal.c
 	gcc -g -c signal.c
 
+General.o: General.c
+	gcc -g -c General.c
+
+MCImplementation.o: MCImplementation.o
+	gcc -g -c MCImplementation.c
+
 clean:
-	rm -f main.o Fifo.o signal.o Interface.o TMCommands.o Commands.o TMInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o serialize.o monitor monitor.o travelMonitor
+	rm -f main.o Fifo.o signal.o Interface.o MonitorCommands.o Commands.o MonitorInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o serialize.o monitor monitor.o travelMonitor

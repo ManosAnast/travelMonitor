@@ -1,4 +1,4 @@
-# include "Interface.h"
+# include "linkedlist.h"
 
 LinkedList * LLInit()
 {
@@ -49,20 +49,6 @@ LinkedList * LLSearch(LinkedList * List, int Item)
         Temp=Temp->Next;
     }
     return NULL;
-}
-
-void LLPrint(LinkedList * List, int Level)
-{
-    LinkedList * Temp=List;
-    while (Temp != NULL){
-        printf("%d",Temp->Id);
-        Temp=Temp->Next;
-        if (Temp != NULL){
-            printf(" -> ");
-        }
-    }
-    printf("\n");
-    return;
 }
 
 void LLDestroy(LinkedList ** List)

@@ -17,6 +17,8 @@ void MCPrint(MonitorCheck * MonitorList, char * VName, char * CountryName);
 
 void MCDestroy(MonitorCheck * MonitorList);
 
+int * MCLog(MonitorCheck * MonitorList);
+
 
 /* Takes a virus list and a country list and starts the TTY
  * that gives us the interface that we need in order to use some commands.

@@ -159,21 +159,10 @@ void TTYMonitor(Virus * Vlist, char * text)
             addVaccinationRecords(Vlist, text);
             interrupt_flag_usr=0;
         }
-
-        if(interrupt_flag_kill){
-            interrupt_flag_kill=0;
-
-            int size, fd;
-            char ** Array=(char **)calloc(1, sizeof(char *));
-            Array[0]=(char *)calloc(strlen(NULLstring)+1, sizeof(char)); strcpy(Array[0], NULLstring);
-
-            void * Input=serialize_commands(Array, &size);
-            Fifo_writeCommands(monitorId, Input, size, &fd);
-
-            free(Array[0]); free(Array); free(Input); close(fd);
+        if(interrupt_flag_iq){
             break;
         }
-
+        
         // Unserialize the commands.
         char ** Array=unserialize_commands(Input);
 

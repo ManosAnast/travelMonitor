@@ -58,3 +58,14 @@ void MCDestroy(MonitorCheck * MonitorList)
     }
     return;
 }
+
+int * MCLog(MonitorCheck * MonitorList)
+{
+    MonitorCheck * Temp=MonitorList;
+    int *Array=(int *)calloc(3, sizeof(int));
+    while (Temp->Next!=NULL){
+        Array[0]+=Temp->Accepted+Temp->Rejected; Array[1]+=Temp->Accepted; Array[2]+=Temp->Rejected;
+        Temp=Temp->Next;
+    }   
+    return Array;
+}

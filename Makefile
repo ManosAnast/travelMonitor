@@ -48,4 +48,4 @@ MCImplementation.o: MCImplementation.o
 	gcc -g -c MCImplementation.c
 
 clean:
-	rm -f main.o Fifo.o signal.o Interface.o MonitorCommands.o Commands.o MonitorInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o serialize.o monitor monitor.o travelMonitor
+	rm -f main.o MCImplementation.o General.o Fifo.o signal.o Interface.o MonitorCommands.o Commands.o MonitorInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o serialize.o monitor monitor.o travelMonitor

@@ -3,6 +3,7 @@
 void travelRequest(MonitorCheck * MonitorList, Virus * Vlist, char ** Array, Country * Clist)
 {
     char * Id=Array[1]; char * TravelDate=Array[2]; char * CountryFrom=Array[3]; char * CountryTo=Array[4]; char * VirusName=Array[5];
+    Date * RequestDate=CreateDate(TravelDate); // Make the Date struct for the TravelDate.
     Virus * VTemp=Vlist;
     while (VTemp != NULL){
         if (!strcmp(VTemp->VirusName, VirusName)){
@@ -19,7 +20,6 @@ void travelRequest(MonitorCheck * MonitorList, Virus * Vlist, char ** Array, Cou
                 void * Input=Fifo_readCommands(monitorId, &fd); close(fd);
                 char ** Answer=unserialize_commands(Input); free(Input);
 
-                Date * RequestDate=CreateDate(TravelDate); // Make the Date struct for the TravelDate.
                 if(!strcmp(Answer[0], "NO")){ // If monitor returned no, insert it as rejected to the MonitorList and return.
                     printf("REQUEST REJECTED – YOU ARE NOT VACCINATED\n");
                     
@@ -55,6 +55,7 @@ void travelRequest(MonitorCheck * MonitorList, Virus * Vlist, char ** Array, Cou
         VTemp=VTemp->Next;
     }
     printf("REQUEST REJECTED – YOU ARE NOT VACCINATED\n");
+    MCInsert(MonitorList, VirusName, CountryFrom, false, true, RequestDate);
     return;
 }
 

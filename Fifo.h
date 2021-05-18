@@ -12,6 +12,7 @@
 # include <signal.h>
 # include <sys/wait.h>
 # include <sys/select.h>
+# include <syslog.h>
 
 extern int buffer;
 

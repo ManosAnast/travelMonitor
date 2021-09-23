@@ -1,51 +1,41 @@
-all: clean main.o MCImplementation.o General.o Interface.o signal.o MonitorCommands.o Commands.o serialize.o monitor.o Fifo.o MonitorInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o HashImplementation.o
-	gcc main.o  General.o MCImplementation.o signal.o Interface.o serialize.o Commands.o Fifo.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o HashImplementation.o -o travelMonitor
-	gcc monitor.o serialize.o General.o signal.o MonitorCommands.o Fifo.o MonitorInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o HashImplementation.o -o monitor
+# Where are our moduleS?
+MODULES = ../travelMonitor
 
-main.o: main.c
-	gcc -g -c main.c
+# Set -I. so that include files in this directory are always found (even when compiling the modules in other dirs)
+CFLAGS = -g -Wall -I. -I./src
 
-MonitorInterface.o: MonitorInterface.c
-	gcc -g -c MonitorInterface.c
+# set the name of the executable file to compile here
+PROGRAM = travelMonitor
 
-Interface.o: Interface.c
-	gcc -g -c Interface.c
+PROGRAMM = monitor
 
-ExtrasImplementation.o: ExtrasImplementation.c
-	gcc -g -c ExtrasImplementation.c
 
-bloomfilterImplementation.o: bloomfilterImplementation.c
-	gcc -g -c bloomfilterImplementation.c
+# List object files needed to compile the program.
 
-LinkedList.o: LinkedList.c
-	gcc -g -c LinkedList.c
+CODE = ./src/main.c  ./src/General.c ./src/MCImplementation.c ./src/signal.c ./src/Interface.c ./src/serialize.c ./src/Commands.c ./src/Fifo.c ./src/ExtrasImplementation.c ./src/bloomfilterImplementation.c ./src/LinkedList.c ./src/HashImplementation.c
 
-HashImplementation.o: HashImplementation.c
-	gcc -g -c HashImplementation.c
+OBJS = main.o  General.o MCImplementation.o signal.o Interface.o serialize.o Commands.o Fifo.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o HashImplementation.o
 
-Fifo.o: Fifo.c
-	gcc -g -c Fifo.c
+CODEM = ./src/monitor.c ./src/serialize.c ./src/General.c ./src/signal.c ./src/MonitorCommands.c ./src/Fifo.c ./src/MonitorInterface.c ./src/ExtrasImplementation.c ./src/bloomfilterImplementation.c ./src/LinkedList.c ./src/HashImplementation.c
 
-monitor.o: monitor.c
-	gcc -g -c monitor.c
+OBJSM = monitor.o serialize.o General.o signal.o MonitorCommands.o Fifo.o MonitorInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o HashImplementation.o
 
-Commands.o: Commands.c
-	gcc -g -c Commands.c
 
-MonitorCommands.o: MonitorCommands.c
-	gcc -g -c MonitorCommands.c
+$(PROGRAM): clean  $(CODE) $(CODEM)
+	gcc -c $(CODE) -lm
+	gcc $(OBJS) -o $(PROGRAM) -lm
+	gcc -c $(CODEM) -lm
+	gcc $(OBJSM) -o $(PROGRAMM) -lm
 
-serialize.o: serialize.c
-	gcc -g -c serialize.c
 
-signal.o: signal.c
-	gcc -g -c signal.c
 
-General.o: General.c
-	gcc -g -c General.c
+clean: cleanm
+	rm -f $(PROGRAM) $(OBJS)
 
-MCImplementation.o: MCImplementation.o
-	gcc -g -c MCImplementation.c
+cleanm:
+	rm -f $(PROGRAMM) $(OBJSM)
 
-clean:
-	rm -f main.o MCImplementation.o General.o Fifo.o signal.o Interface.o MonitorCommands.o Commands.o MonitorInterface.o ExtrasImplementation.o bloomfilterImplementation.o LinkedList.o SkiplistImplementation.o HashImplementation.o serialize.o monitor monitor.o travelMonitor
+run: $(PROGRAM)
+	./$(PROGRAM)
+
+

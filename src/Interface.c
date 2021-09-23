@@ -42,12 +42,6 @@ void TTY(Virus * Vlist, Country * Clist)
             int * Log=(int *)calloc(3, sizeof(int)); Log=MCLog(MonitorList);
             fprintf(fp, "TOTAL TRAVEL REQUESTS %d\nACCEPTED %d\nREJECTED %d", Log[0], Log[1], Log[2]);
             free(Log); fclose(fp);
-
-            Clist=Clist->Next;
-            while(Clist != NULL){
-                kill(Clist->pid, SIGKILL);
-                Clist=Clist->Next;
-            }  
             break;
         }
 
@@ -90,12 +84,6 @@ void TTY(Virus * Vlist, Country * Clist)
             int * Log=(int *)calloc(3, sizeof(int)); Log=MCLog(MonitorList);
             fprintf(fp, "TOTAL TRAVEL REQUESTS %d\nACCEPTED %d\nREJECTED %d", Log[0], Log[1], Log[2]);
             free(Log); fclose(fp);
-
-            Country * CTemp=Clist->Next;
-            while (CTemp != NULL){
-                kill(CTemp->pid, SIGINT);
-                CTemp=CTemp->Next;
-            }
             break;
         }
         printf("\n");

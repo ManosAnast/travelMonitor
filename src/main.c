@@ -28,6 +28,12 @@ int main(int argc, char * argv[])
         }
     }
 
+    // Check if fifo directory exists. If it doesn't create it.
+    struct stat st = {0};
+    if (stat("./fifo", &st) == -1) {
+        mkdir("./fifo", 0700);
+    }
+
     
     char * buf=(char *)malloc(4*sizeof(char));
     sprintf(buf, "%d", buffer);
@@ -96,8 +102,18 @@ int main(int argc, char * argv[])
         }
         unlink(fifo_name);
     }
-    wait(NULL);
-    
+
+    int status;
+    Clist=Clist->Next;
+    while(Clist != NULL){
+        kill(Clist->pid, SIGTERM);
+        sleep(5);
+        if(waitpid(Clist->pid, &status, WNOHANG)==Clist->pid){
+            kill(Clist->pid, SIGKILL);
+        }
+        waitpid(Clist->pid, &status, 0);
+        Clist=Clist->Next;
+    }      
 
     VirusDestroy(&Vlist);
     CountryDestroy(&Clist);
